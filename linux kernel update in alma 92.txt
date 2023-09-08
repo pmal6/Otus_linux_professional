@@ -1,0 +1,170 @@
+# ДЗ по курсу OTUS Linux Professional ( 30.08.2023 ) 
+## Урок 1 : Обновить ядро в базовой системе 
+### Вошел в Alma Linux версии 9.2 как root
+
+login as: root
+root@172.21.1.161's password:
+Last login: Tue Sep  5 17:45:52 2023
+
+### Данные некоторые используемого сервера
+### Версия ядра 5.14.0-284.11.1.el9_2.x86_64
+
+[root@alma92 ~]# hostnamectl
+ Static hostname: alma92
+       Icon name: computer-server
+         Chassis: server 🖳
+      Machine ID: a72177971d124eca92a8a06ee0b9179f
+         Boot ID: dd7372b5575148b499fe60f45ebdac08
+Operating System: AlmaLinux 9.2 (Turquoise Kodkod)
+     CPE OS Name: cpe:/o:almalinux:almalinux:9::baseos
+          Kernel: Linux 5.14.0-284.11.1.el9_2.x86_64
+    Architecture: x86-64
+ Hardware Vendor: Nettrix
+  Hardware Model: R620 G30
+Firmware Version: NJGS04S237
+
+### Проверяем установленную версию Linux
+ 
+[root@alma92 ~]# cat /etc/redhat-release
+AlmaLinux release 9.2 (Turquoise Kodkod)
+[root@alma92 ~]#
+
+### Подключаме репозиторий ElRepo :   ELRepo.org Community Enterprise Linux Repository - el9
+### Этот репозиторий поддержки RedHat Enterprise Linux, centOS и др.
+
+
+[root@alma92 ~]# rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+
+### Устанавливаем ElRepo для 9-ой версии
+
+[root@alma92 ~]# dnf install -y https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm
+Последняя проверка окончания срока действия метаданных: 0:00:40 назад, Вт 05 сен 2023 18:01:40.
+elrepo-release-9.el9.elrepo.noarch.rpm                                                                   12 kB/s |  12 kB     00:00
+Зависимости разрешены.
+========================================================================================================================================
+ Пакет                             Архитектура               Версия                               Репозиторий                     Размер
+========================================================================================================================================
+Установка:
+ elrepo-release                    noarch                    9.1-1.el9.elrepo                     @commandline                     12 k
+
+Результат транзакции
+========================================================================================================================================
+Установка  1 Пакет
+
+Общий размер: 12 k
+Объем изменений: 5.0 k
+Загрузка пакетов:
+Проверка транзакции
+Проверка транзакции успешно завершена.
+Идет проверка транзакции
+Тест транзакции проведен успешно.
+Выполнение транзакции
+  Подготовка       :                                                                                                                1/1
+  Установка        : elrepo-release-9.1-1.el9.elrepo.noarch                                                                         1/1
+  Проверка         : elrepo-release-9.1-1.el9.elrepo.noarch                                                                         1/1
+
+Установлен:
+  elrepo-release-9.1-1.el9.elrepo.noarch
+
+Выполнено!
+
+### Список подклчюченных репозиториев
+
+[root@alma92 ~]# dnf repolist
+идентификатор репозитория                             имя репозитория
+appstream                                             AlmaLinux 9 - AppStream
+baseos                                                AlmaLinux 9 - BaseOS
+elrepo                                                ELRepo.org Community Enterprise Linux Repository - el9
+extras                                                AlmaLinux 9 - Extras
+[root@alma92 ~]#
+
+### Список доступных ядер выводим командой:
+
+[root@alma92 ~]# dnf --disablerepo="*" --enablerepo="elrepo-kernel" list available| grep kernel-ml
+kernel-ml.x86_64                        6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-core.x86_64                   6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-devel.x86_64                  6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-devel-matched.x86_64          6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-doc.noarch                    6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-headers.x86_64                6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-modules.x86_64                6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-modules-extra.x86_64          6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-tools.x86_64                  6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-tools-libs.x86_64             6.5.1-1.el9.elrepo         elrepo-kernel
+kernel-ml-tools-libs-devel.x86_64       6.5.1-1.el9.elrepo         elrepo-kernel
+
+### Устанавливаем последнее доступное ядро 6.5.1
+
+[root@alma92 ~]# dnf --enablerepo=elrepo-kernel install kernel-ml
+ELRepo.org Community Enterprise Linux Repository - el9                                                  264 kB/s | 181 kB     00:00
+Зависимости разрешены.
+========================================================================================================================================
+ Пакет                              Архитектура             Версия                                 Репозиторий                    Размер
+========================================================================================================================================
+Установка:
+ kernel-ml                          x86_64                  6.5.1-1.el9.elrepo                     elrepo-kernel                   40 k
+Установка зависимостей:
+ kernel-ml-core                     x86_64                  6.5.1-1.el9.elrepo                     elrepo-kernel                   57 M
+ kernel-ml-modules                  x86_64                  6.5.1-1.el9.elrepo                     elrepo-kernel                   54 M
+
+Результат транзакции
+========================================================================================================================================
+Установка  3 Пакета
+
+Объем загрузки: 111 M
+Объем изменений: 156 M
+Продолжить? [д/Н]: д
+Загрузка пакетов:
+(1/3): kernel-ml-6.5.1-1.el9.elrepo.x86_64.rpm                                                          172 kB/s |  40 kB     00:00
+(2/3): kernel-ml-core-6.5.1-1.el9.elrepo.x86_64.rpm                                                     1.7 MB/s |  57 MB     00:33
+(3/3): kernel-ml-modules-6.5.1-1.el9.elrepo.x86_64.rpm                                                  1.2 MB/s |  54 MB     00:46
+----------------------------------------------------------------------------------------------------------------------------------------
+Общий размер                                                                                            2.4 MB/s | 111 MB     00:46
+Проверка транзакции
+Проверка транзакции успешно завершена.
+Идет проверка транзакции
+Тест транзакции проведен успешно.
+Выполнение транзакции
+  Подготовка       :                                                                                                                1/1
+  Установка        : kernel-ml-core-6.5.1-1.el9.elrepo.x86_64                                                                       1/3
+  Запуск скриптлета: kernel-ml-core-6.5.1-1.el9.elrepo.x86_64                                                                       1/3
+  Установка        : kernel-ml-modules-6.5.1-1.el9.elrepo.x86_64                                                                    2/3
+  Запуск скриптлета: kernel-ml-modules-6.5.1-1.el9.elrepo.x86_64                                                                    2/3
+  Установка        : kernel-ml-6.5.1-1.el9.elrepo.x86_64                                                                            3/3
+  Запуск скриптлета: kernel-ml-core-6.5.1-1.el9.elrepo.x86_64                                                                       3/3
+  Запуск скриптлета: kernel-ml-6.5.1-1.el9.elrepo.x86_64                                                                            3/3
+  Проверка         : kernel-ml-6.5.1-1.el9.elrepo.x86_64                                                                            1/3
+  Проверка         : kernel-ml-core-6.5.1-1.el9.elrepo.x86_64                                                                       2/3
+  Проверка         : kernel-ml-modules-6.5.1-1.el9.elrepo.x86_64                                                                    3/3
+
+Установлен:
+  kernel-ml-6.5.1-1.el9.elrepo.x86_64     kernel-ml-core-6.5.1-1.el9.elrepo.x86_64     kernel-ml-modules-6.5.1-1.el9.elrepo.x86_64
+
+Выполнено!
+[root@alma92 ~]#
+
+### Настраиваем загрузку Linux с новым ядром
+
+[root@alma92 ~]#
+[root@alma92 ~]# grub2-set-default 0
+
+### Обновляем конфигурацию grub
+
+[root@alma92 ~]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Adding boot menu entry for UEFI Firmware Settings ...
+done
+[root@alma92 ~]#
+
+### Перегружаем сервер:
+
+[root@alma92 ~]# reboot
+[root@alma92 ~]#
+
+### Проверяем версию ядра после перезагрузки сервера
+
+root@172.21.1.161's password:
+Last login: Tue Sep  5 18:20:49 2023
+[root@alma92 ~]# uname -r
+6.5.1-1.el9.elrepo.x86_64
+[root@alma92 ~]#
