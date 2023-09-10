@@ -1,0 +1,478 @@
+# Работа с mdadm
+## Начальная конфигурация - три раздела в ВМ VirtualBox Ubuntu 
+
+root@ubuntuforotus:~# lsblk
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   10G  0 disk
+sdb                         8:16   0   10G  0 disk
+sdc                         8:32   0   10G  0 disk
+sdd                         8:48   0   40G  0 disk
+├─sdd1                      8:49   0    1M  0 part
+├─sdd2                      8:50   0    2G  0 part /boot
+└─sdd3                      8:51   0   38G  0 part
+  └─ubuntu--vg-ubuntu--lv 253:0    0   19G  0 lvm  /
+sr0                        11:0    1 1024M  0 rom
+
+## Создаем два раздела по 4 ГБ на каждом диске /dev/sda : sda1 и sda2; /dev/sdb : sdb1 и sdb2 ; /dev/sdc : sdc1 и sdc2 
+## Всего 6 разделов
+
+root@ubuntuforotus:~# fdisk /dev/sda
+
+Welcome to fdisk (util-linux 2.37.2).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Command (m for help): g
+
+Created a new GPT disklabel (GUID: 47C19A69-8111-884A-8179-C98B68BA0D03).
+The device contains 'dos' signature and it will be removed by a write command. See fdisk(8) man page and --wipe option for more details.
+
+Command (m for help): n
+Partition number (1-128, default 1):
+First sector (2048-20971486, default 2048):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-20971486, default 20971486): +4G
+
+Created a new partition 1 of type 'Linux filesystem' and of size 4 GiB.
+
+Command (m for help): n
+Partition number (2-128, default 2):
+First sector (8390656-20971486, default 8390656):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (8390656-20971486, default 20971486): +4G
+
+Created a new partition 2 of type 'Linux filesystem' and of size 4 GiB.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+root@ubuntuforotus:~# lsblk
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   10G  0 disk
+├─sda1                      8:1    0    4G  0 part
+└─sda2                      8:2    0    4G  0 part
+sdb                         8:16   0   10G  0 disk
+sdc                         8:32   0   10G  0 disk
+sdd                         8:48   0   40G  0 disk
+├─sdd1                      8:49   0    1M  0 part
+├─sdd2                      8:50   0    2G  0 part /boot
+└─sdd3                      8:51   0   38G  0 part
+  └─ubuntu--vg-ubuntu--lv 253:0    0   19G  0 lvm  /
+sr0                        11:0    1 1024M  0 rom
+root@ubuntuforotus:~# fdisk /dev/sdb
+
+Welcome to fdisk (util-linux 2.37.2).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table.
+Created a new DOS disklabel with disk identifier 0x54ec3d94.
+
+Command (m for help): g
+Created a new GPT disklabel (GUID: 6BBFAE37-0011-4F4C-AA3C-DD7A56B7D056).
+
+Command (m for help): n
+Partition number (1-128, default 1):
+First sector (2048-20971486, default 2048):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-20971486, default 20971486): +4G
+
+Created a new partition 1 of type 'Linux filesystem' and of size 4 GiB.
+
+Command (m for help): n
+Partition number (2-128, default 2):
+First sector (8390656-20971486, default 8390656):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (8390656-20971486, default 20971486): +4G
+
+Created a new partition 2 of type 'Linux filesystem' and of size 4 GiB.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+root@ubuntuforotus:~# lsblk
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   10G  0 disk
+├─sda1                      8:1    0    4G  0 part
+└─sda2                      8:2    0    4G  0 part
+sdb                         8:16   0   10G  0 disk
+├─sdb1                      8:17   0    4G  0 part
+└─sdb2                      8:18   0    4G  0 part
+sdc                         8:32   0   10G  0 disk
+sdd                         8:48   0   40G  0 disk
+├─sdd1                      8:49   0    1M  0 part
+├─sdd2                      8:50   0    2G  0 part /boot
+└─sdd3                      8:51   0   38G  0 part
+  └─ubuntu--vg-ubuntu--lv 253:0    0   19G  0 lvm  /
+sr0                        11:0    1 1024M  0 rom
+root@ubuntuforotus:~# fdisk
+root@ubuntuforotus:~# fdisk /dev/sdc
+
+Welcome to fdisk (util-linux 2.37.2).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table.
+Created a new DOS disklabel with disk identifier 0x03f4a80f.
+
+Command (m for help): g
+Created a new GPT disklabel (GUID: 508D97D7-F900-6E47-A9CF-6979F73B1282).
+
+Command (m for help): n
+Partition number (1-128, default 1):
+First sector (2048-20971486, default 2048):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-20971486, default 20971486): +4G
+
+Created a new partition 1 of type 'Linux filesystem' and of size 4 GiB.
+
+Command (m for help): n
+Partition number (2-128, default 2):
+First sector (8390656-20971486, default 8390656):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (8390656-20971486, default 20971486): +4G
+
+Created a new partition 2 of type 'Linux filesystem' and of size 4 GiB.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+root@ubuntuforotus:~# lsblk
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   10G  0 disk
+├─sda1                      8:1    0    4G  0 part
+└─sda2                      8:2    0    4G  0 part
+sdb                         8:16   0   10G  0 disk
+├─sdb1                      8:17   0    4G  0 part
+└─sdb2                      8:18   0    4G  0 part
+sdc                         8:32   0   10G  0 disk
+├─sdc1                      8:33   0    4G  0 part
+└─sdc2                      8:34   0    4G  0 part
+sdd                         8:48   0   40G  0 disk
+├─sdd1                      8:49   0    1M  0 part
+├─sdd2                      8:50   0    2G  0 part /boot
+└─sdd3                      8:51   0   38G  0 part
+  └─ubuntu--vg-ubuntu--lv 253:0    0   19G  0 lvm  /
+sr0                        11:0    1 1024M  0 rom
+
+## Активных массивов в /proc/mdstat нет: 
+
+root@ubuntuforotus:~# cat /proc/mdstat
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10]
+unused devices: <none>
+root@ubuntuforotus:~# 
+
+## Файл /etc/fstab НЕ содержит информацию об md массивах
+root@ubuntuforotus:~# cat /etc/fstab
+
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/ubuntu-vg/ubuntu-lv during curtin installation
+/dev/disk/by-id/dm-uuid-LVM-ccTdJ8XZ8KGS3y90Oi9U6F6YK1830KxTXvJ5Mw8gRu8PRf1jl0Tq1AcgSn5iCUlh / ext4 defaults 0 1
+# /boot was on /dev/sdd2 during curtin installation
+/dev/disk/by-uuid/b7bfa90c-803f-4dca-bdf5-557e6e330b2d /boot ext4 defaults 0 1
+/swap.img       none    swap    sw      0       0
+root@ubuntuforotus:~#
+
+## Файл /etc/mdadm/mdadm.conf НЕ имеет описания md массива также:
+
+root@ubuntuforotus:~# cat /etc/mdadm/mdadm.conf
+# mdadm.conf
+#
+# !NB! Run update-initramfs -u after updating this file.
+# !NB! This will ensure that initramfs has an uptodate copy.
+#
+# Please refer to mdadm.conf(5) for information about this file.
+#
+
+# by default (built-in), scan all partitions (/proc/partitions) and all
+# containers for MD superblocks. alternatively, specify devices to scan, using
+# wildcards if desired.
+#DEVICE partitions containers
+
+# automatically tag new arrays as belonging to the local system
+HOMEHOST <system>
+
+# instruct the monitoring daemon where to send mail alerts
+MAILADDR root
+
+# definitions of existing MD arrays
+
+# This configuration was auto-generated on Tue, 09 Aug 2022 11:56:48 +0000 by mkconf
+root@ubuntuforotus:~#
+
+## У нас 6 разделов по 4 ГБ для создания RAID5 массива
+
+root@ubuntuforotus:~# lsblk
+NAME                      MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda                         8:0    0   10G  0 disk
+├─sda1                      8:1    0    4G  0 part
+└─sda2                      8:2    0    4G  0 part
+sdb                         8:16   0   10G  0 disk
+├─sdb1                      8:17   0    4G  0 part
+└─sdb2                      8:18   0    4G  0 part
+sdc                         8:32   0   10G  0 disk
+├─sdc1                      8:33   0    4G  0 part
+└─sdc2                      8:34   0    4G  0 part
+sdd                         8:48   0   40G  0 disk
+├─sdd1                      8:49   0    1M  0 part
+├─sdd2                      8:50   0    2G  0 part /boot
+└─sdd3                      8:51   0   38G  0 part
+  └─ubuntu--vg-ubuntu--lv 253:0    0   19G  0 lvm  /
+sr0                        11:0    1 1024M  0 rom
+
+## Создаем массив /dev/md0 RAID5 из 6 ти разделов по 4 ГБ:
+
+root@ubuntuforotus:~# mdadm --create --verbose /dev/md0 --level 5 --raid-devices=6 /dev/sda1 /dev/sda2 /dev/sdb1 /dev/sdb2 /dev/sdc1 /dev/sdc2
+mdadm: layout defaults to left-symmetric
+mdadm: layout defaults to left-symmetric
+mdadm: chunk size defaults to 512K
+mdadm: partition table exists on /dev/sda1
+mdadm: partition table exists on /dev/sda1 but will be lost or
+       meaningless after creating array
+mdadm: size set to 4189184K
+Continue creating array? y
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md0 started.
+root@ubuntuforotus:~#
+
+### следим за созданием RAID 5 из 6-ти разделов
+
+root@ubuntuforotus:~# cat /proc/mdstat
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10]
+md0 : active raid5 sdc2[6] sdc1[4] sdb2[3] sdb1[2] sda2[1] sda1[0]
+      20945920 blocks super 1.2 level 5, 512k chunk, algorithm 2 [6/5] [UUUUU_]
+      [>....................]  recovery =  1.5% (63036/4189184) finish=96.8min speed=709K/sec
+
+unused devices: <none>
+root@ubuntuforotus:~#
+
+## Процесс создания массива завершен
+
+root@ubuntuforotus:~# cat /proc/mdstat
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10]
+md0 : active raid5 sdc2[6] sdc1[4] sdb2[3] sdb1[2] sda2[1] sda1[0]
+      20945920 blocks super 1.2 level 5, 512k chunk, algorithm 2 [6/6] [UUUUUU]
+
+unused devices: <none>
+root@ubuntuforotus:~#
+
+## Создание и монтирование файловй системы
+
+root@ubuntuforotus:~# mkfs.ext4 -F /dev/md0
+mke2fs 1.46.5 (30-Dec-2021)
+Creating filesystem with 5236480 4k blocks and 1310720 inodes
+Filesystem UUID: 3a4bd1c8-bade-4546-a2dd-17f1d0e0de56
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+        4096000
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (32768 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+root@ubuntuforotus:~#
+
+root@ubuntuforotus:~# mkdir -p /mnt/md0
+root@ubuntuforotus:~# mount /dev/md0 /mnt/md0
+root@ubuntuforotus:~#
+
+root@ubuntuforotus:~# df -h -x devtmpfs -x tmpfs
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   19G  6.3G   12G  36% /
+/dev/sdd2                          2.0G  129M  1.7G   8% /boot
+/dev/md0                            20G   24K   19G   1% /mnt/md0
+root@ubuntuforotus:~#
+
+
+
+## Теперь мы сканируем активные массвы и добавляем в файл mdadm.conf
+
+root@ubuntuforotus:~# mdadm --detail --scan | tee -a /etc/mdadm/mdadm.conf
+ARRAY /dev/md0 metadata=1.2 name=ubuntuforotus:0 UUID=a7fd854b:14fad852:c637bc1c:78a24203
+
+## В файле /etc/mdadm/mdadm.conf появилась дополнительная запись о массиве /dev/md0
+root@ubuntuforotus:~# vim /etc/mdadm/mdadm.conf
+
+# mdadm.conf
+#
+# !NB! Run update-initramfs -u after updating this file.
+# !NB! This will ensure that initramfs has an uptodate copy.
+#
+# Please refer to mdadm.conf(5) for information about this file.
+#
+
+# by default (built-in), scan all partitions (/proc/partitions) and all
+# containers for MD superblocks. alternatively, specify devices to scan, using
+# wildcards if desired.
+#DEVICE partitions containers
+
+# automatically tag new arrays as belonging to the local system
+HOMEHOST <system>
+
+# instruct the monitoring daemon where to send mail alerts
+MAILADDR root
+
+# definitions of existing MD arrays
+
+# This configuration was auto-generated on Tue, 09 Aug 2022 11:56:48 +0000 by mkconf
+ARRAY /dev/md0 metadata=1.2 name=ubuntuforotus:0 UUID=a7fd854b:14fad852:c637bc1c:78a24203
+
+## После этого можем обновить initramfs или начальную файловую систему оперативной памяти,
+## чтобы массив был доступен во время процесса загрузки:
+
+root@ubuntuforotus:~# update-initramfs -u
+update-initramfs: Generating /boot/initrd.img-5.15.0-83-generic
+root@ubuntuforotus:~#
+
+## Добавляем новые параметры монтирования файловой системы в файл /etc/fstab для автоматического
+## монтирования при загрузке:
+
+root@ubuntuforotus:~# echo '/dev/m0 /mnt/md0 ext4 defaults,nofail,discard 0 0' | tee -a /etc/fstab
+/dev/m0 /mnt/md0 ext4 defaults,nofail,discard 0 0
+root@ubuntuforotus:~#
+
+## Файл /etc/fstab имеет запись для монтирования /mnt/md0
+
+root@ubuntuforotus:~# vim /etc/fstab
+
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/ubuntu-vg/ubuntu-lv during curtin installation
+/dev/disk/by-id/dm-uuid-LVM-ccTdJ8XZ8KGS3y90Oi9U6F6YK1830KxTXvJ5Mw8gRu8PRf1jl0Tq1AcgSn5iCUlh / ext4 defaults 0 1
+# /boot was on /dev/sdd2 during curtin installation
+/dev/disk/by-uuid/b7bfa90c-803f-4dca-bdf5-557e6e330b2d /boot ext4 defaults 0 1
+/swap.img       none    swap    sw      0       0
+/dev/m0 /mnt/md0 ext4 defaults,nofail,discard 0 0
+~
+~
+
+
+root@ubuntuforotus:~# cat /proc/mdstat
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10]
+md0 : active raid5 sdc2[6] sdc1[4] sdb2[3] sdb1[2] sda2[1] sda1[0]
+      20945920 blocks super 1.2 level 5, 512k chunk, algorithm 2 [6/6] [UUUUUU]
+
+unused devices: <none>
+root@ubuntuforotus:~# lsblk
+NAME                      MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINTS
+sda                         8:0    0   10G  0 disk
+├─sda1                      8:1    0    4G  0 part
+│ └─md0                     9:0    0   20G  0 raid5 /mnt/md0
+└─sda2                      8:2    0    4G  0 part
+  └─md0                     9:0    0   20G  0 raid5 /mnt/md0
+sdb                         8:16   0   10G  0 disk
+├─sdb1                      8:17   0    4G  0 part
+│ └─md0                     9:0    0   20G  0 raid5 /mnt/md0
+└─sdb2                      8:18   0    4G  0 part
+  └─md0                     9:0    0   20G  0 raid5 /mnt/md0
+sdc                         8:32   0   10G  0 disk
+├─sdc1                      8:33   0    4G  0 part
+│ └─md0                     9:0    0   20G  0 raid5 /mnt/md0
+└─sdc2                      8:34   0    4G  0 part
+  └─md0                     9:0    0   20G  0 raid5 /mnt/md0
+sdd                         8:48   0   40G  0 disk
+├─sdd1                      8:49   0    1M  0 part
+├─sdd2                      8:50   0    2G  0 part  /boot
+└─sdd3                      8:51   0   38G  0 part
+  └─ubuntu--vg-ubuntu--lv 253:0    0   19G  0 lvm   /
+sr0                        11:0    1 1024M  0 rom
+
+## Имитируем сбой в одном из разделов ( дисков ) /dev/md0 RAID5
+
+
+root@ubuntuforotus:~# mdadm /dev/md0 --fail /dev/sdb1
+mdadm: set /dev/sdb1 faulty in /dev/md0
+
+root@ubuntuforotus:~# mdadm --detail /dev/md0
+/dev/md0:
+           Version : 1.2
+     Creation Time : Sun Sep 10 14:42:48 2023
+        Raid Level : raid5
+        Array Size : 20945920 (19.98 GiB 21.45 GB)
+     Used Dev Size : 4189184 (4.00 GiB 4.29 GB)
+      Raid Devices : 6
+     Total Devices : 6
+       Persistence : Superblock is persistent
+
+       Update Time : Sun Sep 10 17:14:44 2023
+             State : active, degraded
+    Active Devices : 5
+   Working Devices : 5
+    Failed Devices : 1
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : ubuntuforotus:0  (local to host ubuntuforotus)
+              UUID : a7fd854b:14fad852:c637bc1c:78a24203
+            Events : 191
+
+    Number   Major   Minor   RaidDevice State
+       0       8        1        0      active sync   /dev/sda1
+       1       8        2        1      active sync   /dev/sda2
+       -       0        0        2      removed
+       3       8       18        3      active sync   /dev/sdb2
+       4       8       33        4      active sync   /dev/sdc1
+       6       8       34        5      active sync   /dev/sdc2
+
+       2       8       17        -      faulty   /dev/sdb1
+root@ubuntuforotus:~#
+
+root@ubuntuforotus:~# mdadm --manage /dev/md0 --remove /dev/sdb1
+mdadm: hot removed /dev/sdb1 from /dev/md0
+root@ubuntuforotus:~# mdadm --detail /dev/md0
+/dev/md0:
+           Version : 1.2
+     Creation Time : Sun Sep 10 14:42:48 2023
+        Raid Level : raid5
+        Array Size : 20945920 (19.98 GiB 21.45 GB)
+     Used Dev Size : 4189184 (4.00 GiB 4.29 GB)
+      Raid Devices : 6
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Sun Sep 10 17:30:40 2023
+             State : clean, degraded
+    Active Devices : 5
+   Working Devices : 5
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : ubuntuforotus:0  (local to host ubuntuforotus)
+              UUID : a7fd854b:14fad852:c637bc1c:78a24203
+            Events : 353
+
+    Number   Major   Minor   RaidDevice State
+       0       8        1        0      active sync   /dev/sda1
+       1       8        2        1      active sync   /dev/sda2
+       -       0        0        2      removed
+       3       8       18        3      active sync   /dev/sdb2
+       4       8       33        4      active sync   /dev/sdc1
+       6       8       34        5      active sync   /dev/sdc2
+root@ubuntuforotus:~#
+
+## После восстановления раздела не меньше 4 ГБ на устройстве /dev/sdb, например /dev/sdb3 
+## Восстанавливаем массив RAID5 /dev/md0 с помощью команды: 
+
+root@ubuntuforotus:~# mdadm --manage /dev/md0 --add /dev/sdb3
+
