@@ -1,0 +1,745 @@
+# Поднимаем две виртуалки nfss - NFS Server и nfsc - NFS Client
+# с помощью Vagrantfile:
+
+## -*- mode: ruby -*- 
+## vi: set ft=ruby : vsa
+#Vagrant.configure(2) do |config| 
+# config.vm.box = "centos/7" 
+# config.vm.box_version = "2004.01" 
+# config.vm.provider "virtualbox" do |v| 
+# v.memory = 256 
+# v.cpus = 1 
+# end 
+# config.vm.define "nfss" do |nfss| 
+# nfss.vm.network "private_network", ip: "192.168.50.10",  virtualbox__intnet: "net1" 
+# nfss.vm.hostname = "nfss" 
+# end 
+# config.vm.define "nfsc" do |nfsc| 
+# nfsc.vm.network "private_network", ip: "192.168.50.11",  virtualbox__intnet: "net1" 
+# nfsc.vm.hostname = "nfsc" 
+# end 
+#end
+
+## Журнал генерации ВМ nfss и nfsc приведен ниже
+
+##PS C:\Users\pmali> vagrant --version
+## Vagrant 2.4.0
+# ВЕРСИЯ VirtualBox 
+#VirtualBox Graphical User Interface
+#Version 7.0.12 r159484 (Qt5.15.2)
+# IP адреса private_network получены изменением настройки в VirtualBox с Internal Network на bridged
+# они автоматические и для nfss это 172.20.10.2 , а для nfsc - 172.20.10.3
+# Статические адреса из Vagrantfile не были присвоены ВМ по неизвестной причине
+# Ноутбук работает под Win10 c VPN
+ 
+# ========== Журнал Vagranata =====================
+#PS C:\Users\pmali> vagrant up
+#Bringing machine 'nfss' up with 'virtualbox' provider...
+#Bringing machine 'nfsc' up with 'virtualbox' provider...
+#==> nfss: Importing base box 'centos/7'...
+#==> nfss: Matching MAC address for NAT networking...
+#==> nfss: Checking if box 'centos/7' version '2004.01' is up to date...
+#==> nfss: Setting the name of the VM: pmali_nfss_1702885477761_81203
+#==> nfss: Clearing any previously set network interfaces...
+#==> nfss: Preparing network interfaces based on configuration...
+#    nfss: Adapter 1: nat
+#    nfss: Adapter 2: intnet
+#==> nfss: Forwarding ports...
+#    nfss: 22 (guest) => 2222 (host) (adapter 1)
+#==> nfss: Running 'pre-boot' VM customizations...
+#==> nfss: Booting VM...
+#==> nfss: Waiting for machine to boot. This may take a few minutes...
+#    nfss: SSH address: 127.0.0.1:2222
+#    nfss: SSH username: vagrant
+#    nfss: SSH auth method: private key
+#    nfss:
+#    nfss: Vagrant insecure key detected. Vagrant will automatically replace
+#    nfss: this with a newly generated keypair for better security.
+#    nfss:
+#    nfss: Inserting generated public key within guest...
+#    nfss: Removing insecure key from the guest if it's present...
+#    nfss: Key inserted! Disconnecting and reconnecting using new SSH key...
+#==> nfss: Machine booted and ready!
+#[nfss] No Virtualbox Guest Additions installation found.
+#Loaded plugins: fastestmirror
+#Loading mirror speeds from cached hostfile
+# * base: mirror.telepoint.bg
+# * extras: mirror.telepoint.bg
+# * updates: mirror.telepoint.bg
+#Resolving Dependencies
+#--> Running transaction check
+#---> Package centos-release.x86_64 0:7-8.2003.0.el7.centos will be updated
+#---> Package centos-release.x86_64 0:7-9.2009.1.el7.centos will be an update
+#--> Finished Dependency Resolution
+
+#Dependencies Resolved
+
+#================================================================================
+# Package             Arch        Version                     Repository    Size
+#================================================================================
+#Updating:
+# centos-release      x86_64      7-9.2009.1.el7.centos       updates       27 k#
+#
+#Transaction Summary
+#================================================================================
+#Upgrade  1 Package
+
+#Total download size: 27 k
+#Downloading packages:
+#No Presto metadata available for updates
+#Public key for centos-release-7-9.2009.1.el7.centos.x86_64.rpm is not installed
+#warning: /var/cache/yum/x86_64/7/updates/packages/centos-release-7-9.2009.1.el7.centos.x86_64.rpm: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
+#Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+#Importing GPG key 0xF4A80EB5:
+#Userid     : "CentOS-7 Key (CentOS 7 Official Signing Key) <security@centos.org>"
+# Fingerprint: 6341 ab27 53d7 8a78 a7c2 7bb1 24c6 a8a7 f4a8 0eb5
+# Package    : centos-release-7-8.2003.0.el7.centos.x86_64 (@anaconda)
+# From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+#Running transaction check
+#Running transaction test
+#Transaction test succeeded
+#Running transaction
+#  Updating   : centos-release-7-9.2009.1.el7.centos.x86_64                  1/2
+#  Cleanup    : centos-release-7-8.2003.0.el7.centos.x86_64                  2/2
+#  Verifying  : centos-release-7-9.2009.1.el7.centos.x86_64                  1/2
+#  Verifying  : centos-release-7-8.2003.0.el7.centos.x86_64                  2/2
+
+#Updated:
+#  centos-release.x86_64 0:7-9.2009.1.el7.centos
+
+#Complete!
+#Loaded plugins: fastestmirror
+#Loading mirror speeds from cached hostfile
+# * base: mirror.telepoint.bg
+# * extras: mirror.telepoint.bg
+# * updates: mirror.telepoint.bg
+#No package kernel-devel-3.10.0-1127.el7.x86_64 available.
+#Error: Nothing to do
+#Unmounting Virtualbox Guest Additions ISO from: /mnt
+#umount: /mnt: not mounted
+#==> nfss: Checking for guest additions in VM...
+#    nfss: No guest additions were detected on the base box for this VM! Guest
+#    nfss: additions are required for forwarded ports, shared folders, host only
+#    nfss: networking, and more. If SSH fails on this machine, please install
+#    nfss: the guest additions and repackage the box to continue.
+#    nfss:
+#    nfss: This is not an error message; everything may continue to work properly,
+#    nfss: in which case you may ignore this message.
+#The following SSH command responded with a non-zero exit status.
+#Vagrant assumes that this means the command failed!
+
+#umount /mnt
+
+#Stdout from the command:
+
+
+
+#Stderr from the command:
+
+#umount: /mnt: not mounted
+#PS C:\Users\pmali> vagrant up
+#Bringing machine 'nfss' up with 'virtualbox' provider...
+#Bringing machine 'nfsc' up with 'virtualbox' provider...
+#==> nfss: Checking if box 'centos/7' version '2004.01' is up to date...
+#==> nfsc: Importing base box 'centos/7'...
+#==> nfsc: Matching MAC address for NAT networking...
+#==> nfsc: Checking if box 'centos/7' version '2004.01' is up to date...
+#==> nfsc: Setting the name of the VM: pmali_nfsc_1702885608484_21238
+#==> nfsc: Fixed port collision for 22 => 2222. Now on port 2200.
+#==> nfsc: Clearing any previously set network interfaces...
+#==> nfsc: Preparing network interfaces based on configuration...
+#    nfsc: Adapter 1: nat
+#    nfsc: Adapter 2: intnet
+#==> nfsc: Forwarding ports...
+#    nfsc: 22 (guest) => 2200 (host) (adapter 1)
+#==> nfsc: Running 'pre-boot' VM customizations...
+#==> nfsc: Booting VM...
+#==> nfsc: Waiting for machine to boot. This may take a few minutes...
+#    nfsc: SSH address: 127.0.0.1:2200
+#    nfsc: SSH username: vagrant
+#    nfsc: SSH auth method: private key
+#    nfsc:
+#    nfsc: Vagrant insecure key detected. Vagrant will automatically replace
+#    nfsc: this with a newly generated keypair for better security.
+#    nfsc:
+#    nfsc: Inserting generated public key within guest...
+#    nfsc: Removing insecure key from the guest if it's present...
+#    nfsc: Key inserted! Disconnecting and reconnecting using new SSH key...
+#==> nfsc: Machine booted and ready!
+#[nfsc] No Virtualbox Guest Additions installation found.
+#Loaded plugins: fastestmirror
+#Loading mirror speeds from cached hostfile
+# * base: mirror1.sox.rs
+# * extras: mirror1.sox.rs
+# * updates: mirror1.sox.rs
+#Resolving Dependencies
+#--> Running transaction check
+#---> Package centos-release.x86_64 0:7-8.2003.0.el7.centos will be updated
+#---> Package centos-release.x86_64 0:7-9.2009.1.el7.centos will be an update
+#--> Finished Dependency Resolution#
+
+#Dependencies Resolved
+
+#================================================================================
+# Package             Arch        Version                     Repository    Size
+#================================================================================
+#Updating:
+# centos-release      x86_64      7-9.2009.1.el7.centos       updates       27 k
+
+#Transaction Summary
+#================================================================================
+#Upgrade  1 Package
+
+#Total download size: 27 k
+#Downloading packages:
+#No Presto metadata available for updates
+#Public key for centos-release-7-9.2009.1.el7.centos.x86_64.rpm is not installed
+#warning: /var/cache/yum/x86_64/7/updates/packages/centos-release-7-9.2009.1.el7.centos.x86_64.rpm: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
+#Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+#Importing GPG key 0xF4A80EB5:
+# Userid     : "CentOS-7 Key (CentOS 7 Official Signing Key) <security@centos.org>"
+# Fingerprint: 6341 ab27 53d7 8a78 a7c2 7bb1 24c6 a8a7 f4a8 0eb5
+# Package    : centos-release-7-8.2003.0.el7.centos.x86_64 (@anaconda)
+# From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+#Running transaction check
+#Running transaction test
+#Transaction test succeeded
+#Running transaction
+#  Updating   : centos-release-7-9.2009.1.el7.centos.x86_64                  1/2
+#  Cleanup    : centos-release-7-8.2003.0.el7.centos.x86_64                  2/2
+#  Verifying  : centos-release-7-9.2009.1.el7.centos.x86_64                  1/2
+#  Verifying  : centos-release-7-8.2003.0.el7.centos.x86_64                  2/2#
+
+#Updated:
+#  centos-release.x86_64 0:7-9.2009.1.el7.centos#
+
+#Complete!
+#Loaded plugins: fastestmirror
+#Loading mirror speeds from cached hostfile
+# * base: mirror1.sox.rs
+# * extras: mirror1.sox.rs
+# * updates: mirror1.sox.rs
+#No package kernel-devel-3.10.0-1127.el7.x86_64 available.
+#Error: Nothing to do
+#Unmounting Virtualbox Guest Additions ISO from: /mnt
+#umount: /mnt: not mounted
+#==> nfsc: Checking for guest additions in VM...
+#    nfsc: No guest additions were detected on the base box for this VM! Guest
+#    nfsc: additions are required for forwarded ports, shared folders, host only
+#    nfsc: networking, and more. If SSH fails on this machine, please install
+#    nfsc: the guest additions and repackage the box to continue.
+#    nfsc:
+#    nfsc: This is not an error message; everything may continue to work properly,
+#    nfsc: in which case you may ignore this message.
+#The following SSH command responded with a non-zero exit status.
+#Vagrant assumes that this means the command failed!#
+
+#umount /mnt
+
+#Stdout from the command:
+
+
+
+#Stderr from the command:
+
+#umount: /mnt: not mounted
+
+## =============================== Конец журнала генерации ВМ с помощью vagrant ==================
+## ssh сессия с nfss
+
+PS C:\Users\pmali> vagrant ssh nfss
+[vagrant@localhost ~]$ whoami
+
+[vagrant@localhost ~]$ ip a
+...
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:4d:77:d3 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic eth0
+       valid_lft 86166sec preferred_lft 86166sec
+    inet6 fe80::5054:ff:fe4d:77d3/64 scope link
+       valid_lft forever preferred_lft forever
+...
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:e6:66:23 brd ff:ff:ff:ff:ff:ff
+    inet 172.20.10.2/28 brd 172.20.10.15 scope global noprefixroute dynamic eth1
+       valid_lft 86390sec preferred_lft 86390sec
+    inet6 2a03:d000:42a2:17fa:f491:6fd3:646e:3cd7/64 scope global noprefixroute
+       valid_lft forever preferred_lft forever
+    inet6 fe80::ab6d:4809:5121:ff93/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+[vagrant@localhost ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+
+## ssh сессия с nfsc
+
+PS C:\Users\pmali> vagrant ssh nfsc
+[vagrant@localhost ~]$ ip a
+...
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:4d:77:d3 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic eth0
+       valid_lft 85958sec preferred_lft 85958sec
+    inet6 fe80::5054:ff:fe4d:77d3/64 scope link
+       valid_lft forever preferred_lft forever
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:28:af:b9 brd ff:ff:ff:ff:ff:ff
+    inet 172.20.10.3/28 brd 172.20.10.15 scope global noprefixroute dynamic eth1
+       valid_lft 86141sec preferred_lft 86141sec
+    inet6 2a03:d000:42a2:17fa:237f:835b:5c6b:33eb/64 scope global noprefixroute
+       valid_lft forever preferred_lft forever
+    inet6 fe80::d41f:43cf:1d5a:749e/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+
+## Проверяем связь с вм nfss , с NFS сервером
+
+[vagrant@localhost ~]$ ping 172.20.10.2
+PING 172.20.10.2 (172.20.10.2) 56(84) bytes of data.
+64 bytes from 172.20.10.2: icmp_seq=1 ttl=64 time=3.35 ms
+64 bytes from 172.20.10.2: icmp_seq=2 ttl=64 time=0.991 ms
+...
+
+# Возвращаемся на сервер NFS
+
+PS C:\Users\pmali> vagrant ssh nfss
+Last login: Mon Dec 18 07:48:48 2023 from 10.0.2.2
+
+# - сервер NFS уже установлен в CentOS 7 как часть дистрибутива, так что нам нужно лишь доустановить
+ утилиты, которые облегчат отладк
+[vagrant@localhost ~]$ yum install nfs-utils
+Loaded plugins: fastestmirror
+You need to be root to perform this command.
+[vagrant@localhost ~]$ sudo -i
+
+[root@localhost ~]# yum install nfs-utils
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.telepoint.bg
+ * extras: mirror.telepoint.bg
+ * updates: mirror.telepoint.bg
+Resolving Dependencies
+--> Running transaction check
+---> Package nfs-utils.x86_64 1:1.3.0-0.66.el7 will be updated
+---> Package nfs-utils.x86_64 1:1.3.0-0.68.el7.2 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+======================================================================================================================== Package                    Arch                    Version                              Repository                Size
+========================================================================================================================Updating:
+ nfs-utils                  x86_64                  1:1.3.0-0.68.el7.2                   updates                  413 k
+
+Transaction Summary
+========================================================================================================================Upgrade  1 Package
+
+Total download size: 413 k
+Is this ok [y/d/N]: y
+Downloading packages:
+No Presto metadata available for updates
+nfs-utils-1.3.0-0.68.el7.2.x86_64.rpm                                         | 413 kB  00:00:17
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : 1:nfs-utils-1.3.0-0.68.el7.2.x86_64                                               1/2
+  Cleanup    : 1:nfs-utils-1.3.0-0.66.el7.x86_64                                                 2/2
+  Verifying  : 1:nfs-utils-1.3.0-0.68.el7.2.x86_64                                               1/2
+  Verifying  : 1:nfs-utils-1.3.0-0.66.el7.x86_64                                                 2/2
+
+Updated:
+  nfs-utils.x86_64 1:1.3.0-0.68.el7.2
+
+Complete!
+[root@localhost ~]#
+
+# - включаем firewall и проверяем, что он работает
+
+[root@localhost ~]# systemctl enable firewalld --now
+Created symlink from /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service to /usr/lib/systemd/system/firewalld.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/firewalld.service to /usr/lib/systemd/system/firewalld.service.
+[root@localhost ~]#
+
+#- разрешаем в firewall доступ к сервисам NFS 
+
+[root@localhost ~]# firewall-cmd --add-service="nfs3" \
+> --add-service="rpc-bind" \
+> --add-service="mountd" \
+> --permanent
+success
+[root@localhost ~]#
+[root@localhost ~]# firewall-cmd --reload
+success
+[root@localhost ~]# 
+
+#- включаем сервер NFS (для конфигурации NFSv3 over UDP он не требует дополнительной настройки,
+ однако вы можете ознакомиться с умолчаниями в файле __/etc/nfs.conf__) 
+
+[root@localhost ~]# systemctl enable nfs --now
+Created symlink from /etc/systemd/system/multi-user.target.wants/nfs-server.service to /usr/lib/systemd/system/nfs-server.service.
+[root@localhost ~]#
+
+#- проверяем наличие слушаемых портов 2049/udp, 2049/tcp, 20048/udp,  20048/tcp, 111/udp, 111/tcp
+ (не все они будут использоваться далее,  но их наличие сигнализирует о том, что необходимые сервисы готовы принимать внешние подключения) 
+
+[root@localhost ~]# ss -tnplu
+Netid State      Recv-Q Send-Q   Local Address:Port                  Peer Address:Port
+udp   UNCONN     0      0                    *:927                              *:*                   users:(("rpcbind",pid=334,fd=7))
+udp   UNCONN     0      0            127.0.0.1:717                              *:*                   users:(("rpc.statd",pid=6053,fd=5))
+udp   UNCONN     0      0                    *:2049                             *:*
+udp   UNCONN     0      0                    *:54546                            *:*                   users:(("rpc.statd",pid=6053,fd=8))
+udp   UNCONN     0      0            127.0.0.1:323                              *:*                   users:(("chronyd",pid=394,fd=5))
+udp   UNCONN     0      0                    *:68                               *:*                   users:(("dhclient",pid=1977,fd=7))
+udp   UNCONN     0      0                    *:68                               *:*                   users:(("dhclient",pid=683,fd=6))
+udp   UNCONN     0      0                    *:20048                            *:*                   users:(("rpc.mountd",pid=6065,fd=7))
+udp   UNCONN     0      0                    *:46418                            *:*
+udp   UNCONN     0      0                    *:111                              *:*                   users:(("rpcbind",pid=334,fd=6))
+udp   UNCONN     0      0                 [::]:927                           [::]:*                   users:(("rpcbind",pid=334,fd=10))
+udp   UNCONN     0      0                 [::]:2049                          [::]:*
+udp   UNCONN     0      0                [::1]:323                           [::]:*                   users:(("chronyd",pid=394,fd=6))
+udp   UNCONN     0      0                 [::]:20048                         [::]:*                   users:(("rpc.mountd",pid=6065,fd=9))
+udp   UNCONN     0      0                 [::]:48985                         [::]:*
+udp   UNCONN     0      0                 [::]:111                           [::]:*                   users:(("rpcbind",pid=334,fd=9))
+udp   UNCONN     0      0                 [::]:54134                         [::]:*                   users:(("rpc.statd",pid=6053,fd=10))
+tcp   LISTEN     0      64                   *:2049                             *:*
+tcp   LISTEN     0      128                  *:111                              *:*                   users:(("rpcbind",pid=334,fd=8))
+tcp   LISTEN     0      128                  *:20048                            *:*                   users:(("rpc.mountd",pid=6065,fd=8))
+tcp   LISTEN     0      128                  *:38672                            *:*                   users:(("rpc.statd",pid=6053,fd=9))
+tcp   LISTEN     0      64                   *:39734                            *:*
+tcp   LISTEN     0      128                  *:22                               *:*                   users:(("sshd",pid=609,fd=3))
+tcp   LISTEN     0      100          127.0.0.1:25                               *:*                   users:(("master",pid=805,fd=13))
+tcp   LISTEN     0      64                [::]:2049                          [::]:*
+tcp   LISTEN     0      64                [::]:46147                         [::]:*
+tcp   LISTEN     0      128               [::]:111                           [::]:*                   users:(("rpcbind",pid=334,fd=11))
+tcp   LISTEN     0      128               [::]:20048                         [::]:*                   users:(("rpc.mountd",pid=6065,fd=10))
+tcp   LISTEN     0      128               [::]:38066                         [::]:*                   users:(("rpc.statd",pid=6053,fd=11))
+tcp   LISTEN     0      128               [::]:22                            [::]:*                   users:(("sshd",pid=609,fd=4))
+tcp   LISTEN     0      100              [::1]:25                            [::]:*                   users:(("master",pid=805,fd=14))
+[root@localhost ~]#
+
+#- создаём и настраиваем директорию, которая будет экспортирована в будущем
+
+[root@localhost ~]# mkdir -p /srv/share/upload
+[root@localhost ~]# chown -R nfsnobody:nfsnobody /srv/share
+[root@localhost ~]# chmod 0777 /srv/share/upload
+[root@localhost ~]#
+
+#- создаём в файле __/etc/exports__ структуру, которая позволит экспортировать ранее созданную директорию 
+
+[root@localhost ~]# cat << EOF > /etc/exports
+> /srv/share 172.20.10.3/28(rw,sync,root_squash)
+> EOF
+[root@localhost ~]#
+
+#- экспортируем ранее созданную директорию 
+
+[root@localhost ~]# exportfs -r
+
+#- проверяем экспортированную директорию следующей командой
+
+[root@localhost ~]# exportfs -s
+/srv/share  172.20.10.3/28(sync,wdelay,hide,no_subtree_check,sec=sys,rw,secure,root_squash,no_all_squash)
+[root@localhost ~]#
+
+### Настраиваем клиент NFS 
+
+
+## Заходим на ВМ клиента как vagrant
+
+PS C:\Users\pmali> vagrant ssh nfsc
+Last login: Mon Dec 18 07:54:14 2023 from 10.0.2.2
+[vagrant@localhost ~]$
+[vagrant@localhost ~]$
+[vagrant@localhost ~]$ sudo -i
+[root@localhost ~]#
+# как пользователь root
+
+# - доустановим вспомогательные утилиты 
+[root@localhost ~]# yum install nfs-utils
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror1.sox.rs
+ * extras: mirror1.sox.rs
+ * updates: mirror1.sox.rs
+Resolving Dependencies
+--> Running transaction check
+---> Package nfs-utils.x86_64 1:1.3.0-0.66.el7 will be updated
+---> Package nfs-utils.x86_64 1:1.3.0-0.68.el7.2 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+============================================================================================================================================
+ Package                         Arch                         Version                                   Repository                     Size
+============================================================================================================================================
+Updating:
+ nfs-utils                       x86_64                       1:1.3.0-0.68.el7.2                        updates                       413 k
+
+Transaction Summary
+============================================================================================================================================
+Upgrade  1 Package
+
+Total download size: 413 k
+Is this ok [y/d/N]: y
+Downloading packages:
+No Presto metadata available for updates
+nfs-utils-1.3.0-0.68.el7.2.x86_64.rpm                                                                                | 413 kB  00:00:16
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : 1:nfs-utils-1.3.0-0.68.el7.2.x86_64                                                                                      1/2
+  Cleanup    : 1:nfs-utils-1.3.0-0.66.el7.x86_64                                                                                        2/2
+  Verifying  : 1:nfs-utils-1.3.0-0.68.el7.2.x86_64                                                                                      1/2
+  Verifying  : 1:nfs-utils-1.3.0-0.66.el7.x86_64                                                                                        2/2
+
+Updated:
+  nfs-utils.x86_64 1:1.3.0-0.68.el7.2
+
+Complete!
+[root@localhost ~]#
+#- включаем firewall и проверяем, что он работает
+[root@localhost ~]# systemctl enable firewalld --now
+Created symlink from /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service to /usr/lib/systemd/system/firewalld.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/firewalld.service to /usr/lib/systemd/system/firewalld.service.
+[root@localhost ~]# systemctl status firewalld
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2023-12-18 08:44:31 UTC; 12s ago
+     Docs: man:firewalld(1)
+ Main PID: 2218 (firewalld)
+   CGroup: /system.slice/firewalld.service
+           └─2218 /usr/bin/python2 -Es /usr/sbin/firewalld --nofork --nopid
+
+Dec 18 08:44:31 localhost.localdomain systemd[1]: Starting firewalld - dynamic firewall daemon...
+Dec 18 08:44:31 localhost.localdomain systemd[1]: Started firewalld - dynamic firewall daemon.
+Dec 18 08:44:32 localhost.localdomain firewalld[2218]: WARNING: AllowZoneDrifting is enabled. This is considered an insecure config...t now.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@localhost ~]#
+
+#- добавляем в __/etc/fstab__ строку_
+
+[root@localhost ~]# echo "172.20.10.2:/srv/share/ /mnt nfs vers=3,proto=udp,noauto,x-systemd.automount 0 0" >> /etc/fstab
+[root@localhost ~]#
+
+# перегружаем сервисы
+
+[root@localhost ~]# systemctl daemon-reload
+[root@localhost ~]# systemctl restart remote-fs.target
+[root@localhost ~]#
+
+#в данном случае происходит автоматическая генерация systemd
+ units в каталоге `/run/systemd/generator/`, которые производя
+т монтирование при первом обращении к катаmcлогу `/mnt/` - заходим в директорию `/mnt/`
+ и проверяем успешность монтирования
+
+[root@localhost ~]# cd /mnt
+[root@localhost mnt]#  mount | grep mnt
+systemd-1 on /mnt type autofs (rw,relatime,fd=46,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=41877)
+172.20.10.2:/srv/share/ on /mnt type nfs (rw,relatime,vers=3,rsize=32768,wsize=32768,namlen=255,hard,proto=udp,timeo=11,retrans=3,sec=sys,mountaddr=172.20.10.2,mountvers=3,mountport=20048,mountproto=udp,local_lock=none,addr=172.20.10.2)
+[root@localhost mnt]#
+
+# `vers=3` и `proto=udp`, что соотвествует NFSv3  over UDP, как того требует задание.
+
+### Проверка работоспособности
+
+#- заходим на сервер
+
+PS C:\Users\pmali> vagrant ssh nfss
+Last login: Mon Dec 18 08:02:55 2023 from 10.0.2.2
+[vagrant@localhost ~]$
+[vagrant@localhost ~]$ sudo -i
+[root@localhost ~]#
+#- заходим в каталог `/srv/share/upload`
+[root@localhost ~]# cd /srv/share/upload/
+# - создаём тестовый файл `touch check_file
+[root@localhost upload]# touch check_file
+[root@localhost upload]# ll
+total 0
+-rw-r--r--. 1 root root 0 Dec 18 09:11 check_file
+[root@localhost upload]#
+
+#- заходим на клиент 
+PS C:\Users\pmali> vagrant ssh nfsc
+Last login: Mon Dec 18 08:40:50 2023 from 10.0.2.2
+[vagrant@localhost ~]$ sudo -i
+[root@localhost ~]#
+
+#- заходим в каталог `/mnt/upload` 
+#- проверяем наличие ранее созданного файла 
+[root@localhost ~]# cd /mnt/upload/
+[root@localhost upload]# ll
+total 4
+-rw-r--r--. 1 root root 17 Dec 18 09:14 check_file
+[root@localhost upload]#
+
+#- создаём тестовый файл `touch client_file` 
+
+[root@localhost upload]# touch client_file
+[root@localhost upload]#
+
+#- проверяем, что файл успешно создан 
+ 
+[root@localhost upload]# ll
+total 4
+-rw-r--r--. 1 root      root      17 Dec 18 09:14 check_file
+-rw-r--r--. 1 nfsnobody nfsnobody  0 Dec 18 09:17 client_file
+[root@localhost upload]#
+
+#Предварительно проверяем клиент: 
+#- перезагружаем клиент
+[root@localhost upload]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+ 
+#- заходим на клиент
+PS C:\Users\pmali> vagrant ssh nfsc
+Last login: Mon Dec 18 09:14:46 2023 from 10.0.2.2
+[vagrant@localhost ~]$ sudo -i
+[root@localhost ~]#
+ 
+#- заходим в каталог `/mnt/upload` 
+#- проверяем наличие ранее созданных файлов 
+
+[root@localhost ~]# cd /mnt/upload/
+[root@localhost upload]# ll
+total 4
+-rw-r--r--. 1 root      root      17 Dec 18 09:14 check_file
+-rw-r--r--. 1 nfsnobody nfsnobody  0 Dec 18 09:17 client_file
+[root@localhost upload]#
+
+#Проверяем сервер: 
+#- заходим на сервер в отдельном окне терминала
+
+PS C:\Users\pmali> vagrant ssh nfss
+Last login: Mon Dec 18 09:09:13 2023 from 10.0.2.2
+[vagrant@localhost ~]$ sudo -i
+[root@localhost ~]#
+ 
+#- перезагружаем сервер 
+
+[root@localhost ~]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+PS C:\Users\pmali>
+
+#- заходим на сервер 
+
+PS C:\Users\pmali> vagrant ssh nfss
+Last login: Mon Dec 18 09:24:24 2023 from 10.0.2.2
+[vagrant@localhost ~]$
+
+#- проверяем наличие файлов в каталоге `/srv/share/upload/`
+
+[vagrant@localhost ~]$ ls -liah /srv/share/upload/
+total 4.0K
+67151077 drwxrwxrwx. 2 nfsnobody nfsnobody 43 Dec 18 09:17 .
+33907375 drwxr-xr-x. 3 nfsnobody nfsnobody 20 Dec 18 08:28 ..
+67151082 -rw-r--r--. 1 root      root      17 Dec 18 09:14 check_file
+67151080 -rw-r--r--. 1 nfsnobody nfsnobody  0 Dec 18 09:17 client_file
+[vagrant@localhost ~]$
+
+# - проверяем статус сервера NFS `systemctl status nfs`
+
+[vagrant@localhost ~]$ sudo systemctl status nfs
+● nfs-server.service - NFS server and services
+   Loaded: loaded (/usr/lib/systemd/system/nfs-server.service; enabled; vendor preset: disabled)
+  Drop-In: /run/systemd/generator/nfs-server.service.d
+           └─order-with-mounts.conf
+   Active: active (exited) since Mon 2023-12-18 09:25:35 UTC; 4min 8s ago
+  Process: 803 ExecStartPost=/bin/sh -c if systemctl -q is-active gssproxy; then systemctl reload gssproxy ; fi (code=exited, status=0/SUCCESS)
+  Process: 779 ExecStart=/usr/sbin/rpc.nfsd $RPCNFSDARGS (code=exited, status=0/SUCCESS)
+  Process: 774 ExecStartPre=/usr/sbin/exportfs -r (code=exited, status=0/SUCCESS)
+ Main PID: 779 (code=exited, status=0/SUCCESS)
+   CGroup: /system.slice/nfs-server.service
+
+Dec 18 09:25:34 localhost.localdomain systemd[1]: Starting NFS server and services...
+Dec 18 09:25:35 localhost.localdomain systemd[1]: Started NFS server and services.
+[vagrant@localhost ~]$
+
+# - проверяем статус firewall `systemctl status firewalld`
+
+[vagrant@localhost ~]$ sudo systemctl status firewalld
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2023-12-18 09:25:30 UTC; 4min 55s ago
+     Docs: man:firewalld(1)
+ Main PID: 406 (firewalld)
+   CGroup: /system.slice/firewalld.service
+           └─406 /usr/bin/python2 -Es /usr/sbin/firewalld --nofork --nopid
+
+Dec 18 09:25:28 localhost.localdomain systemd[1]: Starting firewalld - dynamic firewall daemon...
+Dec 18 09:25:30 localhost.localdomain systemd[1]: Started firewalld - dynamic firewall daemon.
+Dec 18 09:25:30 localhost.localdomain firewalld[406]: WARNING: AllowZoneDrifting is enabled. This is considered a...now.
+Hint: Some lines were ellipsized, use -l to show in full.
+[vagrant@localhost ~]$
+
+# - проверяем экспорты `exportfs -s` 
+
+[vagrant@localhost ~]$ sudo exportfs -s
+/srv/share  172.20.10.3/28(sync,wdelay,hide,no_subtree_check,sec=sys,rw,secure,root_squash,no_all_squash)
+[vagrant@localhost ~]$ cd /mnt/
+[vagrant@localhost mnt]$ sudo exportfs -s
+/srv/share  172.20.10.3/28(sync,wdelay,hide,no_subtree_check,sec=sys,rw,secure,root_squash,no_all_squash)
+[vagrant@localhost mnt]$ sudo -i
+[root@localhost ~]#  cd /mnt/
+[root@localhost mnt]# exportfs -s
+/srv/share  172.20.10.3/28(sync,wdelay,hide,no_subtree_check,sec=sys,rw,secure,root_squash,no_all_squash)
+[root@localhost mnt]#
+
+
+#- проверяем работу RPC `showmount -a 172.20.10.2
+
+[root@localhost mnt]# showmount -a 172.20.10.2
+All mount points on 172.20.10.2:
+172.20.10.3:/srv/share
+[root@localhost mnt]#
+
+##Проверяем клиент: 
+#- возвращаемся на клиент 
+#- перезагружаем клиент 
+[root@localhost upload]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+PS C:\Users\pmali>
+#- заходим на клиент
+
+PS C:\Users\pmali> vagrant ssh nfsc
+Last login: Mon Dec 18 09:20:21 2023 from 10.0.2.2
+[vagrant@localhost ~]$
+ 
+#- проверяем работу RPC `showmount -a 192.168.50.10`
+[vagrant@localhost ~]$ showmount -a 172.20.10.2
+All mount points on 172.20.10.2:
+
+# - заходим в каталог `/mnt/upload`
+ 
+#- проверяем статус монтирования `mount | grep mnt` 
+
+[root@localhost ~]# cd /mnt/upload/
+[root@localhost upload]# mount | grep mnt
+systemd-1 on /mnt type autofs (rw,relatime,fd=32,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=11204)
+172.20.10.2:/srv/share/ on /mnt type nfs (rw,relatime,vers=3,rsize=32768,wsize=32768,namlen=255,hard,proto=udp,timeo=11,retrans=3,sec=sys,mountaddr=172.20.10.2,mountvers=3,mountport=20048,mountproto=udp,local_lock=none,addr=172.20.10.2)
+[root@localhost upload]#
+
+#- проверяем наличие ранее созданных файлов 
+
+[root@localhost upload]# ll
+total 4
+-rw-r--r--. 1 root      root      17 Dec 18 09:14 check_file
+-rw-r--r--. 1 nfsnobody nfsnobody  0 Dec 18 09:17 client_file
+[root@localhost upload]#
+
+#- создаём тестовый файл `touch final_check` 
+
+
+#- проверяем, что файл успешно создан 
+
+[root@localhost upload]# touch final_check
+[root@localhost upload]# ll
+total 4
+-rw-r--r--. 1 root      root      17 Dec 18 09:14 check_file
+-rw-r--r--. 1 nfsnobody nfsnobody  0 Dec 18 09:17 client_file
+-rw-r--r--. 1 nfsnobody nfsnobody  0 Dec 18 09:43 final_check
+[root@localhost upload]#
+
+
