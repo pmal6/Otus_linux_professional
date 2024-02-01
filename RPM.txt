@@ -1,0 +1,1406 @@
+# Устанавливаем centOS 8 c помощью вагрант файла:
+# Every Vagrant development environment requires a box. You can search for
+# boxes at https://vagrantcloud.com/search.
+#  config.vm.box = "centos/8"
+#config.vm.box_version = "20230710.0"
+PS C:\Users\pmali> vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Box 'centos/8' could not be found. Attempting to find and install...
+    default: Box Provider: virtualbox
+    default: Box Version: >= 0
+==> default: Loading metadata for box 'centos/8'
+    default: URL: https://vagrantcloud.com/api/v2/vagrant/centos/8
+==> default: Adding box 'centos/8' (v2011.0) for provider: virtualbox
+    default: Downloading: https://vagrantcloud.com/centos/boxes/8/versions/2011.0/providers/virtualbox/unknown/vagrant.box
+==> default: Box download is resuming from prior download progress
+Download redirected to host: cloud.centos.org
+    default:
+    default: Calculating and comparing box checksum...
+==> default: Successfully added box 'centos/8' (v2011.0) for 'virtualbox'!
+==> default: Importing base box 'centos/8'...
+==> default: Matching MAC address for NAT networking...
+==> default: Checking if box 'centos/8' version '2011.0' is up to date...
+==> default: Setting the name of the VM: pmali_default_1706536721523_8644
+==> default: Clearing any previously set network interfaces...
+==> default: Preparing network interfaces based on configuration...
+    default: Adapter 1: nat
+==> default: Forwarding ports...
+    default: 22 (guest) => 2222 (host) (adapter 1)
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+    default:
+    default: Vagrant insecure key detected. Vagrant will automatically replace
+    default: this with a newly generated keypair for better security.
+    default:
+    default: Inserting generated public key within guest...
+    default: Removing insecure key from the guest if it's present...
+    default: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> default: Machine booted and ready!
+[default] No Virtualbox Guest Additions installation found.
+CentOS Linux 8 - AppStream                       52  B/s |  38  B     00:00
+Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
+Unmounting Virtualbox Guest Additions ISO from: /mnt
+umount: /mnt: not mounted.
+==> default: Checking for guest additions in VM...
+    default: No guest additions were detected on the base box for this VM! Guest
+    default: additions are required for forwarded ports, shared folders, host only
+    default: networking, and more. If SSH fails on this machine, please install
+    default: the guest additions and repackage the box to continue.
+    default:
+    default: This is not an error message; everything may continue to work properly,
+    default: in which case you may ignore this message.
+The following SSH command responded with a non-zero exit status.
+Vagrant assumes that this means the command failed!
+
+umount /mnt
+
+Stdout from the command:
+
+
+
+Stderr from the command:
+
+umount: /mnt: not mounted.
+PS C:\Users\pmali>
+
+PS C:\Users\pmali> vagrant ssh
+[vagrant@localhost ~]$ lsblk
+NAME   MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+sda      8:0    0  10G  0 disk
+└─sda1   8:1    0  10G  0 part /
+[vagrant@localhost ~]$ hostnamectl
+   Static hostname: localhost.localdomain
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: 535a22e51de4442d848c290ac10a87af
+           Boot ID: ef7adec81a7e4004976b8b4952ef04c9
+    Virtualization: oracle
+  Operating System: CentOS Linux 8
+       CPE OS Name: cpe:/o:centos:centos:8
+            Kernel: Linux 4.18.0-240.1.1.el8_3.x86_64
+      Architecture: x86-64
+[vagrant@localhost ~]$
+
+[vagrant@localhost ~]$ sudo -i
+[root@localhost ~]# yum install -y \
+> redhat-lsb-core \
+> wget \
+> rpmdevtools \
+> rpm-build \
+> createrepo \
+> yum-utils \
+> gcc
+CentOS Linux 8 - AppStream                                                               51  B/s |  38  B     00:00
+Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
+
+
+[root@localhost ~]# dnf install -y redhat-lsb-core
+CentOS Linux 8 - AppStream                                                               57  B/s |  38  B     00:00
+Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
+[root@localhost ~]# yum repolist
+repo id                                             repo name
+appstream                                           CentOS Linux 8 - AppStream
+baseos                                              CentOS Linux 8 - BaseOS
+extras                                              CentOS Linux 8 - Extras
+[root@localhost ~]# dnf install -y wget
+CentOS Linux 8 - AppStream                                                               38  B/s |  38  B     00:00
+Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
+
+#Ошибка Failed to download metadata for repo 'AppStream' характерна для установок CentOS 8,
+# выполненных в 2022 году. Дело в том, что эта версия ОС перестала поддерживаться 31 декабря 2021 года.
+# Это означает, что CentOS 8 больше не будет получать ресурсы для разработки (пакеты) 
+#от официального проекта CentOS. Теперь, если вам нужно обновить CentOS, вам необходимо изменить
+# зеркала на vault.centos.org, где они будут постоянно заархивированы.
+# В качестве альтернативы вы можете перейти на CentOS Stream.
+
+#Чтобы получать пакеты и обновления, вам необходимо выполнить следующие команды:
+
+[root@localhost ~]# cd /etc/yum.repos.d/
+[root@localhost yum.repos.d]# sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+[root@localhost yum.repos.d]# sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+#Они во всех файлах со списков репозиториев, начинающих на CentOS- , заменяют mirror.centos.org на vault.centos.org.
+
+[root@localhost yum.repos.d]# yum update -y
+CentOS Linux 8 - AppStream                                                              1.7 MB/s | 8.4 MB     00:04
+CentOS Linux 8 - BaseOS                                                                 807 kB/s | 4.6 MB     00:05
+CentOS Linux 8 - Extras                                                                 4.1 kB/s |  10 kB     00:02
+Dependencies resolved.
+========================================================================================================================
+ Package                           Architecture Version                                           Repository       Size
+========================================================================================================================
+Installing:
+ kernel                            x86_64       4.18.0-348.7.1.el8_5                              baseos          7.0 M
+ kernel-core                       x86_64       4.18.0-348.7.1.el8_5                              baseos           38 M
+ kernel-modules                    x86_64       4.18.0-348.7.1.el8_5                              baseos           30 M
+Upgrading:
+ NetworkManager                    x86_64       1:1.32.10-4.el8                                   baseos          2.6 M
+ NetworkManager-libnm              x86_64       1:1.32.10-4.el8                                   baseos          1.8 M
+ NetworkManager-team               x86_64       1:1.32.10-4.el8                                   baseos          148 k
+ NetworkManager-tui                x86_64       1:1.32.10-4.el8                                   baseos          336 k
+ authselect                        x86_64       1.2.2-3.el8                                       baseos          133 k
+ authselect-libs                   x86_64       1.2.2-3.el8                                       baseos          222 k
+ avahi-libs                        x86_64       0.7-20.el8                                        baseos           62 k
+ bash                              x86_64       4.4.20-2.el8                                      baseos          1.5 M
+ bind-export-libs                  x86_64       32:9.11.26-6.el8                                  baseos          1.1 M
+ brotli                            x86_64       1.0.6-3.el8                                       baseos          323 k
+ ca-certificates                   noarch       2021.2.50-80.0.el8_4                              baseos          390 k
+ centos-gpg-keys                   noarch       1:8-3.el8                                         baseos           12 k
+ centos-linux-release              noarch       8.5-1.2111.el8                                    baseos           22 k
+ centos-linux-repos                noarch       8-3.el8                                           baseos           20 k
+ chkconfig                         x86_64       1.19.1-1.el8                                      baseos          198 k
+ chrony                            x86_64       4.1-1.el8                                         baseos          327 k
+ coreutils                         x86_64       8.30-12.el8                                       baseos          1.2 M
+ coreutils-common                  x86_64       8.30-12.el8                                       baseos          2.0 M
+ cpio                              x86_64       2.12-10.el8                                       baseos          265 k
+ crontabs                          noarch       1.11-17.20190603git.el8                           baseos           25 k
+ crypto-policies                   noarch       20210617-1.gitc776d3e.el8                         baseos           63 k
+ crypto-policies-scripts           noarch       20210617-1.gitc776d3e.el8                         baseos           83 k
+ cryptsetup-libs                   x86_64       2.3.3-4.el8                                       baseos          470 k
+ cups-libs                         x86_64       1:2.2.6-40.el8                                    baseos          433 k
+ curl                              x86_64       7.61.1-22.el8                                     baseos          351 k
+ dbus                              x86_64       1:1.12.8-14.el8                                   baseos           41 k
+ dbus-common                       noarch       1:1.12.8-14.el8                                   baseos           46 k
+ dbus-daemon                       x86_64       1:1.12.8-14.el8                                   baseos          240 k
+ dbus-libs                         x86_64       1:1.12.8-14.el8                                   baseos          184 k
+ dbus-tools                        x86_64       1:1.12.8-14.el8                                   baseos           85 k
+ device-mapper                     x86_64       8:1.02.177-10.el8                                 baseos          377 k
+ device-mapper-libs                x86_64       8:1.02.177-10.el8                                 baseos          409 k
+ dhcp-client                       x86_64       12:4.3.6-45.el8                                   baseos          318 k
+ dhcp-common                       noarch       12:4.3.6-45.el8                                   baseos          207 k
+ dhcp-libs                         x86_64       12:4.3.6-45.el8                                   baseos          148 k
+ dmidecode                         x86_64       1:3.2-10.el8                                      baseos           91 k
+ dnf                               noarch       4.7.0-4.el8                                       baseos          544 k
+ dnf-data                          noarch       4.7.0-4.el8                                       baseos          154 k
+ dnf-plugins-core                  noarch       4.0.21-3.el8                                      baseos           70 k
+ dracut                            x86_64       049-191.git20210920.el8                           baseos          374 k
+ dracut-network                    x86_64       049-191.git20210920.el8                           baseos          108 k
+ dracut-squash                     x86_64       049-191.git20210920.el8                           baseos           61 k
+ e2fsprogs                         x86_64       1.45.6-2.el8                                      baseos          1.0 M
+ e2fsprogs-libs                    x86_64       1.45.6-2.el8                                      baseos          233 k
+ elfutils-debuginfod-client        x86_64       0.185-1.el8                                       baseos           66 k
+ elfutils-default-yama-scope       noarch       0.185-1.el8                                       baseos           49 k
+ elfutils-libelf                   x86_64       0.185-1.el8                                       baseos          221 k
+ elfutils-libs                     x86_64       0.185-1.el8                                       baseos          292 k
+ ethtool                           x86_64       2:5.8-7.el8                                       baseos          209 k
+ file                              x86_64       5.33-20.el8                                       baseos           77 k
+ file-libs                         x86_64       5.33-20.el8                                       baseos          543 k
+ filesystem                        x86_64       3.8-6.el8                                         baseos          1.1 M
+ firewalld                         noarch       0.9.3-7.el8                                       baseos          502 k
+ firewalld-filesystem              noarch       0.9.3-7.el8                                       baseos           77 k
+ gawk                              x86_64       4.2.1-2.el8                                       baseos          1.1 M
+ glib2                             x86_64       2.56.4-156.el8                                    baseos          2.5 M
+ glibc                             x86_64       2.28-164.el8                                      baseos          3.6 M
+ glibc-common                      x86_64       2.28-164.el8                                      baseos          1.3 M
+ glibc-langpack-en                 x86_64       2.28-164.el8                                      baseos          828 k
+ gnutls                            x86_64       3.6.16-4.el8                                      baseos          1.0 M
+ gpgme                             x86_64       1.13.1-9.el8                                      baseos          336 k
+ grub2-common                      noarch       1:2.02-106.el8                                    baseos          891 k
+ grub2-pc                          x86_64       1:2.02-106.el8                                    baseos           42 k
+ grub2-pc-modules                  noarch       1:2.02-106.el8                                    baseos          916 k
+ grub2-tools                       x86_64       1:2.02-106.el8                                    baseos          2.0 M
+ grub2-tools-extra                 x86_64       1:2.02-106.el8                                    baseos          1.1 M
+ grub2-tools-minimal               x86_64       1:2.02-106.el8                                    baseos          210 k
+ grubby                            x86_64       8.40-42.el8                                       baseos           49 k
+ gssproxy                          x86_64       0.8.0-19.el8                                      baseos          119 k
+ gzip                              x86_64       1.9-12.el8                                        baseos          167 k
+ hdparm                            x86_64       9.54-4.el8                                        baseos          100 k
+ hwdata                            noarch       0.314-8.10.el8                                    baseos          1.7 M
+ hyperv-daemons                    x86_64       0-0.30.20180415git.el8                            appstream        12 k
+ hyperv-daemons-license            noarch       0-0.30.20180415git.el8                            appstream        19 k
+ hypervfcopyd                      x86_64       0-0.30.20180415git.el8                            appstream        19 k
+ hypervkvpd                        x86_64       0-0.30.20180415git.el8                            appstream        28 k
+ hypervvssd                        x86_64       0-0.30.20180415git.el8                            appstream        20 k
+ ima-evm-utils                     x86_64       1.3.2-12.el8                                      baseos           64 k
+ initscripts                       x86_64       10.00.15-1.el8                                    baseos          339 k
+ iproute                           x86_64       5.12.0-4.el8                                      baseos          775 k
+ iptables                          x86_64       1.8.4-20.el8                                      baseos          585 k
+ iptables-ebtables                 x86_64       1.8.4-20.el8                                      baseos           72 k
+ iptables-libs                     x86_64       1.8.4-20.el8                                      baseos          107 k
+ iputils                           x86_64       20180629-7.el8                                    baseos          148 k
+ irqbalance                        x86_64       2:1.4.0-6.el8                                     baseos           56 k
+ json-c                            x86_64       0.13.1-2.el8                                      baseos           40 k
+ kernel-tools                      x86_64       4.18.0-348.7.1.el8_5                              baseos          7.2 M
+ kernel-tools-libs                 x86_64       4.18.0-348.7.1.el8_5                              baseos          7.0 M
+ kexec-tools                       x86_64       2.0.20-57.el8_5.1                                 baseos          514 k
+ keyutils                          x86_64       1.5.10-9.el8                                      baseos           66 k
+ keyutils-libs                     x86_64       1.5.10-9.el8                                      baseos           34 k
+ kmod                              x86_64       25-18.el8                                         baseos          126 k
+ kmod-libs                         x86_64       25-18.el8                                         baseos           68 k
+ kpartx                            x86_64       0.8.4-17.el8                                      baseos          113 k
+ krb5-libs                         x86_64       1.18.2-14.el8                                     baseos          840 k
+ libarchive                        x86_64       3.3.3-1.el8                                       baseos          359 k
+ libblkid                          x86_64       2.32.1-28.el8                                     baseos          217 k
+ libcap                            x86_64       2.26-5.el8                                        baseos           60 k
+ libcap-ng                         x86_64       0.7.11-1.el8                                      baseos           33 k
+ libcom_err                        x86_64       1.45.6-2.el8                                      baseos           49 k
+ libcomps                          x86_64       0.1.16-2.el8                                      baseos           82 k
+ libcurl                           x86_64       7.61.1-22.el8                                     baseos          301 k
+ libdb                             x86_64       5.3.28-42.el8_4                                   baseos          751 k
+ libdb-utils                       x86_64       5.3.28-42.el8_4                                   baseos          150 k
+ libdnf                            x86_64       0.63.0-3.el8                                      baseos          700 k
+ libdrm                            x86_64       2.4.106-2.el8                                     appstream       167 k
+ libfastjson                       x86_64       0.99.9-1.el8                                      appstream        38 k
+ libfdisk                          x86_64       2.32.1-28.el8                                     baseos          251 k
+ libgcc                            x86_64       8.5.0-4.el8_5                                     baseos           79 k
+ libgcrypt                         x86_64       1.8.5-6.el8                                       baseos          463 k
+ libgomp                           x86_64       8.5.0-4.el8_5                                     baseos          206 k
+ libldb                            x86_64       2.3.0-2.el8                                       baseos          189 k
+ libmodulemd                       x86_64       2.13.0-1.el8                                      baseos          233 k
+ libmount                          x86_64       2.32.1-28.el8                                     baseos          234 k
+ libndp                            x86_64       1.7-6.el8                                         baseos           40 k
+ libnfsidmap                       x86_64       1:2.3.3-46.el8                                    baseos          121 k
+ libpcap                           x86_64       14:1.9.1-5.el8                                    baseos          169 k
+ libpwquality                      x86_64       1.4.4-3.el8                                       baseos          107 k
+ librepo                           x86_64       1.14.0-2.el8                                      baseos           93 k
+ libseccomp                        x86_64       2.5.1-1.el8                                       baseos           71 k
+ libselinux                        x86_64       2.9-5.el8                                         baseos          165 k
+ libselinux-utils                  x86_64       2.9-5.el8                                         baseos          243 k
+ libsemanage                       x86_64       2.9-6.el8                                         baseos          165 k
+ libsepol                          x86_64       2.9-3.el8                                         baseos          340 k
+ libsmartcols                      x86_64       2.32.1-28.el8                                     baseos          177 k
+ libsolv                           x86_64       0.7.19-1.el8                                      baseos          374 k
+ libss                             x86_64       1.45.6-2.el8                                      baseos           54 k
+ libssh                            x86_64       0.9.4-3.el8                                       baseos          215 k
+ libssh-config                     noarch       0.9.4-3.el8                                       baseos           19 k
+ libsss_autofs                     x86_64       2.5.2-2.el8_5.3                                   baseos          118 k
+ libsss_certmap                    x86_64       2.5.2-2.el8_5.3                                   baseos          155 k
+ libsss_idmap                      x86_64       2.5.2-2.el8_5.3                                   baseos          120 k
+ libsss_nss_idmap                  x86_64       2.5.2-2.el8_5.3                                   baseos          127 k
+ libsss_sudo                       x86_64       2.5.2-2.el8_5.3                                   baseos          116 k
+ libstdc++                         x86_64       8.5.0-4.el8_5                                     baseos          453 k
+ libtalloc                         x86_64       2.3.2-1.el8                                       baseos           49 k
+ libtevent                         x86_64       0.11.0-0.el8                                      baseos           50 k
+ libtirpc                          x86_64       1.1.4-5.el8                                       baseos          112 k
+ libuuid                           x86_64       2.32.1-28.el8                                     baseos           96 k
+ libwbclient                       x86_64       4.14.5-7.el8_5                                    baseos          121 k
+ libxcrypt                         x86_64       4.1.1-6.el8                                       baseos           73 k
+ libxml2                           x86_64       2.9.7-9.el8_4.2                                   baseos          696 k
+ libxslt                           x86_64       1.1.32-6.el8                                      baseos          250 k
+ linux-firmware                    noarch       20210702-103.gitd79c2677.el8                      baseos          161 M
+ lshw                              x86_64       B.02.19.2-6.el8                                   baseos          341 k
+ lsscsi                            x86_64       0.32-3.el8                                        baseos           71 k
+ lua-libs                          x86_64       5.3.4-12.el8                                      baseos          118 k
+ lz4-libs                          x86_64       1.8.3-3.el8_4                                     baseos           66 k
+ man-db                            x86_64       2.7.6.1-18.el8                                    baseos          887 k
+ man-pages-overrides               noarch       8.5.0.1-1.el8                                     appstream        98 k
+ ncurses                           x86_64       6.1-9.20180224.el8                                baseos          387 k
+ ncurses-base                      noarch       6.1-9.20180224.el8                                baseos           81 k
+ ncurses-libs                      x86_64       6.1-9.20180224.el8                                baseos          334 k
+ nettle                            x86_64       3.4.1-7.el8                                       baseos          301 k
+ nfs-utils                         x86_64       1:2.3.3-46.el8                                    baseos          500 k
+ nftables                          x86_64       1:0.9.3-21.el8                                    baseos          321 k
+ numactl-libs                      x86_64       2.0.12-13.el8                                     baseos           36 k
+ open-vm-tools                     x86_64       11.2.5-2.el8                                      appstream       771 k
+ openldap                          x86_64       2.4.46-18.el8                                     baseos          352 k
+ openssh                           x86_64       8.0p1-10.el8                                      baseos          522 k
+ openssh-clients                   x86_64       8.0p1-10.el8                                      baseos          668 k
+ openssh-server                    x86_64       8.0p1-10.el8                                      baseos          485 k
+ openssl                           x86_64       1:1.1.1k-5.el8_5                                  baseos          709 k
+ openssl-libs                      x86_64       1:1.1.1k-5.el8_5                                  baseos          1.5 M
+ os-prober                         x86_64       1.74-9.el8                                        baseos           51 k
+ p11-kit                           x86_64       0.23.22-1.el8                                     baseos          324 k
+ p11-kit-trust                     x86_64       0.23.22-1.el8                                     baseos          137 k
+ pam                               x86_64       1.3.1-15.el8                                      baseos          739 k
+ parted                            x86_64       3.2-39.el8                                        baseos          555 k
+ pciutils                          x86_64       3.7.0-1.el8                                       baseos          105 k
+ pciutils-libs                     x86_64       3.7.0-1.el8                                       baseos           54 k
+ pcre                              x86_64       8.42-6.el8                                        baseos          211 k
+ platform-python                   x86_64       3.6.8-41.el8                                      baseos           85 k
+ platform-python-pip               noarch       9.0.3-20.el8                                      baseos          1.7 M
+ policycoreutils                   x86_64       2.9-16.el8                                        baseos          373 k
+ polkit                            x86_64       0.115-12.el8                                      baseos          154 k
+ polkit-libs                       x86_64       0.115-12.el8                                      baseos           76 k
+ popt                              x86_64       1.18-1.el8                                        baseos           61 k
+ procps-ng                         x86_64       3.3.15-6.el8                                      baseos          329 k
+ python3-dnf                       noarch       4.7.0-4.el8                                       baseos          545 k
+ python3-dnf-plugins-core          noarch       4.0.21-3.el8                                      baseos          234 k
+ python3-firewall                  noarch       0.9.3-7.el8                                       baseos          432 k
+ python3-gpg                       x86_64       1.13.1-9.el8                                      baseos          245 k
+ python3-hawkey                    x86_64       0.63.0-3.el8                                      baseos          116 k
+ python3-libcomps                  x86_64       0.1.16-2.el8                                      baseos           51 k
+ python3-libdnf                    x86_64       0.63.0-3.el8                                      baseos          777 k
+ python3-libs                      x86_64       3.6.8-41.el8                                      baseos          7.8 M
+ python3-libselinux                x86_64       2.9-5.el8                                         baseos          283 k
+ python3-libxml2                   x86_64       2.9.7-9.el8_4.2                                   baseos          237 k
+ python3-linux-procfs              noarch       0.6.3-1.el8                                       baseos           43 k
+ python3-nftables                  x86_64       1:0.9.3-21.el8                                    baseos           29 k
+ python3-perf                      x86_64       4.18.0-348.7.1.el8_5                              baseos          7.1 M
+ python3-pip-wheel                 noarch       9.0.3-20.el8                                      baseos          1.0 M
+ python3-rpm                       x86_64       4.14.3-19.el8                                     baseos          154 k
+ python3-syspurpose                x86_64       1.28.21-3.el8                                     baseos          312 k
+ python3-unbound                   x86_64       1.7.3-17.el8                                      appstream       119 k
+ qemu-guest-agent                  x86_64       15:4.2.0-59.module_el8.5.0+1063+c9b9feff.1        appstream       257 k
+ quota                             x86_64       1:4.04-14.el8                                     baseos          214 k
+ quota-nls                         noarch       1:4.04-14.el8                                     baseos           95 k
+ rng-tools                         x86_64       6.13-1.git.d207e0b6.el8                           baseos           71 k
+ rpcbind                           x86_64       1.2.5-8.el8                                       baseos           70 k
+ rpm                               x86_64       4.14.3-19.el8                                     baseos          543 k
+ rpm-build-libs                    x86_64       4.14.3-19.el8                                     baseos          156 k
+ rpm-libs                          x86_64       4.14.3-19.el8                                     baseos          344 k
+ rpm-plugin-selinux                x86_64       4.14.3-19.el8                                     baseos           77 k
+ rpm-plugin-systemd-inhibit        x86_64       4.14.3-19.el8                                     baseos           78 k
+ rsync                             x86_64       3.1.3-12.el8                                      baseos          405 k
+ rsyslog                           x86_64       8.2102.0-5.el8                                    appstream       752 k
+ samba-client-libs                 x86_64       4.14.5-7.el8_5                                    baseos          5.4 M
+ samba-common                      noarch       4.14.5-7.el8_5                                    baseos          221 k
+ samba-common-libs                 x86_64       4.14.5-7.el8_5                                    baseos          173 k
+ selinux-policy                    noarch       3.14.3-80.el8_5.2                                 baseos          636 k
+ selinux-policy-targeted           noarch       3.14.3-80.el8_5.2                                 baseos           15 M
+ shadow-utils                      x86_64       2:4.6-14.el8                                      baseos          1.2 M
+ sqlite                            x86_64       3.26.0-15.el8                                     baseos          668 k
+ sqlite-libs                       x86_64       3.26.0-15.el8                                     baseos          581 k
+ squashfs-tools                    x86_64       4.3-20.el8                                        baseos          165 k
+ sssd-client                       x86_64       2.5.2-2.el8_5.3                                   baseos          205 k
+ sssd-common                       x86_64       2.5.2-2.el8_5.3                                   baseos          1.6 M
+ sssd-kcm                          x86_64       2.5.2-2.el8_5.3                                   baseos          254 k
+ sssd-nfs-idmap                    x86_64       2.5.2-2.el8_5.3                                   baseos          116 k
+ sudo                              x86_64       1.8.29-7.el8_4.1                                  baseos          925 k
+ systemd                           x86_64       239-51.el8_5.2                                    baseos          3.6 M
+ systemd-libs                      x86_64       239-51.el8_5.2                                    baseos          1.1 M
+ systemd-pam                       x86_64       239-51.el8_5.2                                    baseos          477 k
+ systemd-udev                      x86_64       239-51.el8_5.2                                    baseos          1.6 M
+ trousers                          x86_64       0.3.15-1.el8                                      baseos          152 k
+ trousers-lib                      x86_64       0.3.15-1.el8                                      baseos          168 k
+ tuned                             noarch       2.16.0-1.el8                                      baseos          312 k
+ tzdata                            noarch       2021e-1.el8                                       baseos          474 k
+ unbound-libs                      x86_64       1.7.3-17.el8                                      appstream       503 k
+ util-linux                        x86_64       2.32.1-28.el8                                     baseos          2.5 M
+ vim-minimal                       x86_64       2:8.0.1763-16.el8                                 baseos          573 k
+ virt-what                         x86_64       1.18-12.el8                                       baseos           36 k
+ which                             x86_64       2.21-16.el8                                       baseos           49 k
+ xfsprogs                          x86_64       5.0.0-9.el8                                       baseos          1.1 M
+ yum                               noarch       4.7.0-4.el8                                       baseos          205 k
+ yum-utils                         noarch       4.0.21-3.el8                                      baseos           73 k
+ zlib                              x86_64       1.2.11-17.el8                                     baseos          102 k
+Installing dependencies:
+ grub2-tools-efi                   x86_64       1:2.02-106.el8                                    baseos          474 k
+ libbpf                            x86_64       0.4.0-1.el8                                       baseos          110 k
+ libibverbs                        x86_64       35.0-1.el8                                        baseos          335 k
+ lmdb-libs                         x86_64       0.9.24-1.el8                                      baseos           58 k
+ rdma-core                         x86_64       35.0-1.el8                                        baseos           59 k
+ tpm2-tss                          x86_64       2.3.2-4.el8                                       baseos          275 k
+
+Transaction Summary
+========================================================================================================================
+Install    9 Packages
+Upgrade  239 Packages
+
+Total download size: 380 M
+Downloading Packages:
+(1/248): grub2-tools-efi-2.02-106.el8.x86_64.rpm                                        237 kB/s | 474 kB     00:02
+(2/248): kernel-4.18.0-348.7.1.el8_5.x86_64.rpm                                         1.3 MB/s | 7.0 MB     00:05
+(3/248): libbpf-0.4.0-1.el8.x86_64.rpm                                                  315 kB/s | 110 kB     00:00
+(4/248): libibverbs-35.0-1.el8.x86_64.rpm                                               621 kB/s | 335 kB     00:00
+(5/248): lmdb-libs-0.9.24-1.el8.x86_64.rpm                                              104 kB/s |  58 kB     00:00
+(6/248): rdma-core-35.0-1.el8.x86_64.rpm                                                 97 kB/s |  59 kB     00:00
+(7/248): tpm2-tss-2.3.2-4.el8.x86_64.rpm                                                424 kB/s | 275 kB     00:00
+(8/248): hyperv-daemons-0-0.30.20180415git.el8.x86_64.rpm                                19 kB/s |  12 kB     00:00
+(9/248): hyperv-daemons-license-0-0.30.20180415git.el8.noarch.rpm                        15 kB/s |  19 kB     00:01
+(10/248): hypervfcopyd-0-0.30.20180415git.el8.x86_64.rpm                                 13 kB/s |  19 kB     00:01
+(11/248): hypervkvpd-0-0.30.20180415git.el8.x86_64.rpm                                   26 kB/s |  28 kB     00:01
+(12/248): hypervvssd-0-0.30.20180415git.el8.x86_64.rpm                                   17 kB/s |  20 kB     00:01
+(13/248): libdrm-2.4.106-2.el8.x86_64.rpm                                                88 kB/s | 167 kB     00:01
+(14/248): kernel-core-4.18.0-348.7.1.el8_5.x86_64.rpm                                   2.2 MB/s |  38 MB     00:16
+(15/248): libfastjson-0.99.9-1.el8.x86_64.rpm                                            24 kB/s |  38 kB     00:01
+(16/248): man-pages-overrides-8.5.0.1-1.el8.noarch.rpm                                  173 kB/s |  98 kB     00:00
+(17/248): open-vm-tools-11.2.5-2.el8.x86_64.rpm                                         1.1 MB/s | 771 kB     00:00
+(18/248): python3-unbound-1.7.3-17.el8.x86_64.rpm                                       242 kB/s | 119 kB     00:00
+(19/248): qemu-guest-agent-4.2.0-59.module_el8.5.0+1063+c9b9feff.1.x86_64.rpm           528 kB/s | 257 kB     00:00
+(20/248): rsyslog-8.2102.0-5.el8.x86_64.rpm                                             1.0 MB/s | 752 kB     00:00
+(21/248): unbound-libs-1.7.3-17.el8.x86_64.rpm                                          778 kB/s | 503 kB     00:00
+(22/248): NetworkManager-libnm-1.32.10-4.el8.x86_64.rpm                                 1.5 MB/s | 1.8 MB     00:01
+(23/248): NetworkManager-team-1.32.10-4.el8.x86_64.rpm                                  146 kB/s | 148 kB     00:01
+(24/248): NetworkManager-tui-1.32.10-4.el8.x86_64.rpm                                   572 kB/s | 336 kB     00:00
+....
+                              
+(145/248): libsss_autofs-2.5.2-2.el8_5.3.x86_64.rpm                                     357 kB/s | 118 kB     00:00
+(146/248): libsss_idmap-2.5.2-2.el8_5.3.x86_64.rpm                                      250 kB/s | 120 kB     00:00
+(147/248): libsss_certmap-2.5.2-2.el8_5.3.x86_64.rpm                                    293 kB/s | 155 kB     00:00
+(148/248): libsss_nss_idmap-2.5.2-2.el8_5.3.x86_64.rpm                                  239 kB/s | 127 kB     00:00
+(149/248): libsss_sudo-2.5.2-2.el8_5.3.x86_64.rpm                                       352 kB/s | 116 kB     00:00
+(150/248): libtalloc-2.3.2-1.el8.x86_64.rpm                                             126 kB/s |  49 kB     00:00
+(151/248): libstdc++-8.5.0-4.el8_5.x86_64.rpm
+....
+[root@localhost yum.repos.d]# yum install -y \
+> redhat-lsb-core \
+> wget \
+> rpmdevtools \
+> rpm-build \
+> createrepo \
+> yum-utils \
+> gcc
+Last metadata expiration check: 0:12:09 ago on Mon 29 Jan 2024 02:16:51 PM UTC.
+Package yum-utils-4.0.21-3.el8.noarch is already installed.
+Dependencies resolved.
+========================================================================================================================
+ Package                           Architecture  Version                                         Repository        Size
+========================================================================================================================
+Installing:
+ createrepo_c                      x86_64        0.17.2-3.el8                                    appstream         88 k
+ gcc                               x86_64        8.5.0-4.el8_5                                   appstream         23 M
+ redhat-lsb-core                   x86_64        4.1-47.el8                                      appstream         46 k
+ rpm-build                         x86_64        4.14.3-19.el8                                   appstream        173 k
+ rpmdevtools                       noarch        8.10-8.el8                                      appstream         87 k
+ wget                              x86_64        1.19.5-10.el8                                   appstream        734 k
+Installing dependencies:
+ annobin                           x86_64        9.72-1.el8_5.2                                  appstream        111 k
+ at                                x86_64        3.1.20-11.el8                                   baseos            81 k
+ bc                                x86_64        1.07.1-5.el8                                    baseos           129 k
+ binutils                          x86_64        2.30-108.el8_5.1                                baseos           5.8 M
+ cpp                               x86_64        8.5.0-4.el8_5                                   appstream         10 M
+ createrepo_c-libs                 x86_64        0.17.2-3.el8                                    appstream        115 k
+ cups-client                       x86_64        1:2.2.6-40.el8                                  appstream        169 k
+ drpm                              x86_64        0.4.1-3.el8                                     appstream         68 k
+ dwz                               x86_64        0.12-10.el8                                     appstream        109 k
+ ed                                x86_64        1.14.2-4.el8                                    baseos            82 k
+ efi-srpm-macros                   noarch        3-3.el8                                         appstream         22 k
+ elfutils                          x86_64        0.185-1.el8                                     baseos           540 k
+ emacs-filesystem                  noarch        1:26.1-7.el8                                    baseos            70 k
+ gc                                x86_64        7.6.4-3.el8                                     appstream        109 k
+ gdb-headless                      x86_64        8.2-16.el8                                      appstream        3.7 M
+ ghc-srpm-macros                   noarch        1.4.2-7.el8                                     appstream        9.3 k
+ glibc-devel                       x86_64        2.28-164.el8                                    baseos           1.0 M
+ glibc-headers                     x86_64        2.28-164.el8                                    baseos           480 k
+ go-srpm-macros                    noarch        2-17.el8                                        appstream         13 k
+ guile                             x86_64        5:2.0.14-7.el8                                  appstream        3.5 M
+ isl                               x86_64        0.16.1-6.el8                                    appstream        841 k
+ kernel-headers                    x86_64        4.18.0-348.7.1.el8_5                            baseos           8.3 M
+ libatomic_ops                     x86_64        7.6.2-3.el8                                     appstream         38 k
+ libbabeltrace                     x86_64        1.5.4-3.el8                                     baseos           200 k
+ libipt                            x86_64        1.6.1-8.el8                                     appstream         50 k
+ libmpc                            x86_64        1.1.0-9.1.el8                                   appstream         61 k
+ libxcrypt-devel                   x86_64        4.1.1-6.el8                                     baseos            25 k
+ m4                                x86_64        1.4.18-7.el8                                    baseos           223 k
+ mailx                             x86_64        12.5-29.el8                                     baseos           257 k
+ make                              x86_64        1:4.2.1-10.el8                                  baseos           498 k
+ ncurses-compat-libs               x86_64        6.1-9.20180224.el8                              baseos           328 k
+ nspr                              x86_64        4.32.0-1.el8_4                                  appstream        142 k
+ nss                               x86_64        3.67.0-7.el8_5                                  appstream        741 k
+ nss-softokn                       x86_64        3.67.0-7.el8_5                                  appstream        487 k
+ nss-softokn-freebl                x86_64        3.67.0-7.el8_5                                  appstream        395 k
+ nss-sysinit                       x86_64        3.67.0-7.el8_5                                  appstream         73 k
+ nss-util                          x86_64        3.67.0-7.el8_5                                  appstream        137 k
+ ocaml-srpm-macros                 noarch        5-4.el8                                         appstream        9.4 k
+ openblas-srpm-macros              noarch        2-2.el8                                         appstream        7.9 k
+ patch                             x86_64        2.7.6-11.el8                                    baseos           138 k
+ perl-Carp                         noarch        1.42-396.el8                                    baseos            30 k
+ perl-Data-Dumper                  x86_64        2.167-399.el8                                   baseos            58 k
+ perl-Digest                       noarch        1.17-395.el8                                    appstream         27 k
+ perl-Digest-MD5                   x86_64        2.55-396.el8                                    appstream         37 k
+ perl-Encode                       x86_64        4:2.97-3.el8                                    baseos           1.5 M
+ perl-Errno                        x86_64        1.28-420.el8                                    baseos            76 k
+ perl-Exporter                     noarch        5.72-396.el8                                    baseos            34 k
+ perl-File-Path                    noarch        2.15-2.el8                                      baseos            38 k
+ perl-File-Temp                    noarch        0.230.600-1.el8                                 baseos            63 k
+ perl-Getopt-Long                  noarch        1:2.50-4.el8                                    baseos            63 k
+ perl-HTTP-Tiny                    noarch        0.074-1.el8                                     baseos            58 k
+ perl-IO                           x86_64        1.38-420.el8                                    baseos           142 k
+ perl-MIME-Base64                  x86_64        3.15-396.el8                                    baseos            31 k
+ perl-Net-SSLeay                   x86_64        1.88-1.module_el8.3.0+410+ff426aa3              appstream        379 k
+ perl-PathTools                    x86_64        3.74-1.el8                                      baseos            90 k
+ perl-Pod-Escapes                  noarch        1:1.07-395.el8                                  baseos            20 k
+ perl-Pod-Perldoc                  noarch        3.28-396.el8                                    baseos            86 k
+ perl-Pod-Simple                   noarch        1:3.35-395.el8                                  baseos           213 k
+ perl-Pod-Usage                    noarch        4:1.69-395.el8                                  baseos            34 k
+ perl-Scalar-List-Utils            x86_64        3:1.49-2.el8                                    baseos            68 k
+ perl-Socket                       x86_64        4:2.027-3.el8                                   baseos            59 k
+ perl-Storable                     x86_64        1:3.11-3.el8                                    baseos            98 k
+ perl-Term-ANSIColor               noarch        4.06-396.el8                                    baseos            46 k
+ perl-Term-Cap                     noarch        1.17-395.el8                                    baseos            23 k
+ perl-Text-ParseWords              noarch        3.30-395.el8                                    baseos            18 k
+ perl-Text-Tabs+Wrap               noarch        2013.0523-395.el8                               baseos            24 k
+ perl-Time-Local                   noarch        1:1.280-1.el8                                   baseos            34 k
+ perl-URI                          noarch        1.73-3.el8                                      appstream        116 k
+ perl-Unicode-Normalize            x86_64        1.25-396.el8                                    baseos            82 k
+ perl-constant                     noarch        1.33-396.el8                                    baseos            25 k
+ perl-interpreter                  x86_64        4:5.26.3-420.el8                                baseos           6.3 M
+ perl-libnet                       noarch        3.11-3.el8                                      appstream        121 k
+ perl-libs                         x86_64        4:5.26.3-420.el8                                baseos           1.6 M
+ perl-macros                       x86_64        4:5.26.3-420.el8                                baseos            72 k
+ perl-parent                       noarch        1:0.237-1.el8                                   baseos            20 k
+ perl-podlators                    noarch        4.11-1.el8                                      baseos           118 k
+ perl-srpm-macros                  noarch        1-25.el8                                        appstream         11 k
+ perl-threads                      x86_64        1:2.21-2.el8                                    baseos            61 k
+ perl-threads-shared               x86_64        1.58-2.el8                                      baseos            48 k
+ postfix                           x86_64        2:3.5.8-2.el8                                   baseos           1.5 M
+ psmisc                            x86_64        23.1-5.el8                                      baseos           151 k
+ python-rpm-macros                 noarch        3-41.el8                                        appstream         15 k
+ python-srpm-macros                noarch        3-41.el8                                        appstream         15 k
+ python3-rpm-macros                noarch        3-41.el8                                        appstream         14 k
+ qt5-srpm-macros                   noarch        5.15.2-1.el8                                    appstream         11 k
+ redhat-lsb-submod-security        x86_64        4.1-47.el8                                      appstream         22 k
+ redhat-rpm-config                 noarch        125-1.el8                                       appstream         86 k
+ rust-srpm-macros                  noarch        5-2.el8                                         appstream        9.2 k
+ spax                              x86_64        1.5.3-13.el8                                    baseos           217 k
+ time                              x86_64        1.9-3.el8                                       baseos            54 k
+ unzip                             x86_64        6.0-45.el8_4                                    baseos           195 k
+ util-linux-user                   x86_64        2.32.1-28.el8                                   baseos           100 k
+ zip                               x86_64        3.0-23.el8                                      baseos           270 k
+ zstd                              x86_64        1.4.4-1.el8                                     appstream        393 k
+Installing weak dependencies:
+ perl-IO-Socket-IP                 noarch        0.39-5.el8                                      appstream         47 k
+ perl-IO-Socket-SSL                noarch        2.066-4.module_el8.3.0+410+ff426aa3             appstream        298 k
+ perl-Mozilla-CA                   noarch        20160104-7.module_el8.3.0+416+dee7bcef          appstream         15 k
+Enabling module streams:
+ perl                                            5.26
+ perl-IO-Socket-SSL                              2.066
+ perl-libwww-perl                                6.34
+
+Transaction Summary
+========================================================================================================================
+Install  103 Packages
+
+Total download size: 79 M
+Installed size: 206 M
+Downloading Packages:
+(1/103): annobin-9.72-1.el8_5.2.x86_64.rpm                                               60 kB/s | 111 kB     00:01
+(2/103): createrepo_c-0.17.2-3.el8.x86_64.rpm                                            46 kB/s |  88 kB     00:01
+(3/103): cups-client-2.2.6-40.el8.x86_64.rpm                                            322 kB/s | 169 kB     00:00
+(4/103): createrepo_c-libs-0.17.2-3.el8.x86_64.rpm                                      114 kB/s | 115 kB     00:01
+(5/103): drpm-0.4.1-3.el8.x86_64.rpm                                                     64 kB/s |  68 kB     00:01
+(6/103): dwz-0.12-10.el8.x86_64.rpm                                                     154 kB/s | 109 kB     00:00
+(7/103): efi-srpm-macros-3-3.el8.noarch.rpm                                              33 kB/s |  22 kB     00:00
+(8/103): gc-7.6.4-3.el8.x86_64.rpm                                                      160 kB/s | 109 kB     00:00
+(9/103): cpp-8.5.0-4.el8_5.x86_64.rpm                                                   1.9 MB/s |  10 MB     00:05
+(10/103): ghc-srpm-macros-1.4.2-7.el8.noarch.rpm                                         21 kB/s | 9.3 kB     00:00
+(11/103): gdb-headless-8.2-16.el8.x86_64.rpm                                            1.6 MB/s | 3.7 MB     00:02
+(12/103): go-srpm-macros-2-17.el8.noarch.rpm                                             20 kB/s |  13 kB     00:00
+....
+(92/103): perl-libs-5.26.3-420.el8.x86_64.rpm                                           1.1 MB/s | 1.6 MB     00:01
+(93/103): perl-podlators-4.11-1.el8.noarch.rpm                                          193 kB/s | 118 kB     00:00
+(94/103): perl-threads-2.21-2.el8.x86_64.rpm                                            108 kB/s |  61 kB     00:00
+(95/103): perl-interpreter-5.26.3-420.el8.x86_64.rpm                                    2.6 MB/s | 6.3 MB     00:02
+(96/103): perl-threads-shared-1.58-2.el8.x86_64.rpm                                     106 kB/s |  48 kB     00:00
+(97/103): psmisc-23.1-5.el8.x86_64.rpm                                                  396 kB/s | 151 kB     00:00
+(98/103): spax-1.5.3-13.el8.x86_64.rpm                                                  415 kB/s | 217 kB     00:00
+(99/103): postfix-3.5.8-2.el8.x86_64.rpm                                                1.7 MB/s | 1.5 MB     00:00
+(100/103): time-1.9-3.el8.x86_64.rpm                                                    137 kB/s |  54 kB     00:00
+(101/103): unzip-6.0-45.el8_4.x86_64.rpm                                                540 kB/s | 195 kB     00:00
+(102/103): util-linux-user-2.32.1-28.el8.x86_64.rpm                                     283 kB/s | 100 kB     00:00
+(103/103): zip-3.0-23.el8.x86_64.rpm                                                    695 kB/s | 270 kB     00:00
+------------------------------------------------------------------------------------------------------------------------
+Total                                                                                   2.9 MB/s |  79 MB     00:27
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                1/1
+  Installing       : nspr-4.32.0-1.el8_4.x86_64                                                                   1/103
+  Running scriptlet: nspr-4.32.0-1.el8_4.x86_64                                                                   1/103
+  Installing       : nss-util-3.67.0-7.el8_5.x86_64                                                               2/103
+  Installing       : binutils-2.30-108.el8_5.1.x86_64                                                             3/103
+  Running scriptlet: binutils-2.30-108.el8_5.1.x86_64                                                             3/103
+  Installing       : unzip-6.0-45.el8_4.x86_64                                                                    4/103
+  Installing       : patch-2.7.6-11.el8.x86_64                                                                    5/103
+  Installing       : python-srpm-macros-3-41.el8.noarch                                                           6/103
+  Installing       : libmpc-1.1.0-9.1.el8.x86_64                                                                  7/103
+  Installing       : drpm-0.4.1-3.el8.x86_64                                                                      8/103
+  Installing       : createrepo_c-libs-0.17.2-3.el8.x86_64                                                        9/103
+  Installing       : cpp-8.5.0-4.el8_5.x86_64                                                                    10/103
+  Running scriptlet: cpp-8.5.0-4.el8_5.x86_64                                                                    10/103
+  Installing       : python-rpm-macros-3-41.el8.noarch                                                           11/103
+  Installing       : python3-rpm-macros-3-41.el8.noarch                                                          12/103
+  Installing       : zip-3.0-23.el8.x86_64                                                                       13/103
+  Installing       : nss-softokn-freebl-3.67.0-7.el8_5.x86_64                                                    14/103
+  Installing       : nss-softokn-3.67.0-7.el8_5.x86_64                                                           15/103
+  ....
+  Installing       : perl-Carp-1.42-396.el8.noarch                                                               45/103
+  Installing       : perl-Exporter-5.72-396.el8.noarch                                                           46/103
+  Installing       : perl-libs-4:5.26.3-420.el8.x86_64                                                           47/103
+  Installing       : perl-Scalar-List-Utils-3:1.49-2.el8.x86_64                                                  48/103
+  Installing       : perl-parent-1:0.237-1.el8.noarch                                                            49/103
+  Installing       : perl-macros-4:5.26.3-420.el8.x86_64                                                         50/103
+  Installing       : perl-Text-Tabs+Wrap-2013.0523-395.el8.noarch                                                51/103
+  Installing       : perl-Unicode-Normalize-1.25-396.el8.x86_64                                                  52/103
+  Installing       : perl-File-Path-2.15-2.el8.noarch                                                            53/103
+  Installing       : perl-IO-1.38-420.el8.x86_64                                                                 54/103
+  Installing       : perl-PathTools-3.74-1.el8.x86_64                                                            55/103
+  Installing       : perl-constant-1.33-396.el8.noarch                                                           56/103
+  Installing       : perl-threads-1:2.21-2.el8.x86_64                                                            57/103
+  Installing       : perl-threads-shared-1.58-2.el8.x86_64                                                       58/103
+  Installing       : perl-interpreter-4:5.26.3-420.el8.x86_64                                                    59/103
+  Installing       : util-linux-user-2.32.1-28.el8.x86_64                                                        60/103
+  Installing       : time-1.9-3.el8.x86_64                                                                       61/103
+  Running scriptlet: time-1.9-3.el8.x86_64                                                                       61/103
+  Installing       : spax-1.5.3-13.el8.x86_64                                                                    62/103
+  Running scriptlet: spax-1.5.3-13.el8.x86_64                                                                    62/103
+  Installing       : psmisc-23.1-5.el8.x86_64                                                                    63/103
+  Running scriptlet: postfix-2:3.5.8-2.el8.x86_64                                                                64/103
+  Installing       : postfix-2:3.5.8-2.el8.x86_64                                                                64/103
+  Running scriptlet: postfix-2:3.5.8-2.el8.x86_64                                                                64/103
+  Installing       : ncurses-compat-libs-6.1-9.20180224.el8.x86_64                                               65/103
+  Installing       : make-1:4.2.1-10.el8.x86_64                                                                  66/103
+  Running scriptlet: make-1:4.2.1-10.el8.x86_64                                                                  66/103
+  Installing       : mailx-12.5-29.el8.x86_64                                                                    67/103
+  Installing       : m4-1.4.18-7.el8.x86_64                                                                      68/103
+  Running scriptlet: m4-1.4.18-7.el8.x86_64                                                                      68/103
+  Installing       : libbabeltrace-1.5.4-3.el8.x86_64                                                            69/103
+  Running scriptlet: libbabeltrace-1.5.4-3.el8.x86_64                                                            69/103
+  Installing       : kernel-headers-4.18.0-348.7.1.el8_5.x86_64                                                  70/103
+  Running scriptlet: glibc-headers-2.28-164.el8.x86_64                                                           71/103
+  Installing       : glibc-headers-2.28-164.el8.x86_64                                                           71/103
+  Installing       : libxcrypt-devel-4.1.1-6.el8.x86_64                                                          72/103
+  Installing       : glibc-devel-2.28-164.el8.x86_64                                                             73/103
+  Running scriptlet: glibc-devel-2.28-164.el8.x86_64                                                             73/103
+  Installing       : emacs-filesystem-1:26.1-7.el8.noarch                                                        74/103
+  Installing       : elfutils-0.185-1.el8.x86_64                                                                 75/103
+  Installing       : ed-1.14.2-4.el8.x86_64                                                                      76/103
+  Running scriptlet: ed-1.14.2-4.el8.x86_64                                                                      76/103
+  Installing       : bc-1.07.1-5.el8.x86_64                                                                      77/103
+  Running scriptlet: bc-1.07.1-5.el8.x86_64                                                                      77/103
+  Installing       : at-3.1.20-11.el8.x86_64                                                                     78/103
+  Running scriptlet: at-3.1.20-11.el8.x86_64                                                                     78/103
+  Installing       : zstd-1.4.4-1.el8.x86_64                                                                     79/103
+  Installing       : rust-srpm-macros-5-2.el8.noarch                                                             80/103
+  Installing       : qt5-srpm-macros-5.15.2-1.el8.noarch                                                         81/103
+  Installing       : perl-srpm-macros-1-25.el8.noarch                                                            82/103
+  Installing       : openblas-srpm-macros-2-2.el8.noarch                                                         83/103
+  Installing       : ocaml-srpm-macros-5-4.el8.noarch                                                            84/103
+  Installing       : libipt-1.6.1-8.el8.x86_64                                                                   85/103
+  Installing       : libatomic_ops-7.6.2-3.el8.x86_64                                                            86/103
+  Installing       : gc-7.6.4-3.el8.x86_64                                                                       87/103
+  Installing       : guile-5:2.0.14-7.el8.x86_64                                                                 88/103
+  Running scriptlet: guile-5:2.0.14-7.el8.x86_64                                                                 88/103
+  Installing       : gdb-headless-8.2-16.el8.x86_64                                                              89/103
+  Installing       : isl-0.16.1-6.el8.x86_64                                                                     90/103
+  Running scriptlet: isl-0.16.1-6.el8.x86_64                                                                     90/103
+  Installing       : gcc-8.5.0-4.el8_5.x86_64                                                                    91/103
+  Running scriptlet: gcc-8.5.0-4.el8_5.x86_64                                                                    91/103
+  Installing       : annobin-9.72-1.el8_5.2.x86_64                                                               92/103
+  Installing       : go-srpm-macros-2-17.el8.noarch                                                              93/103
+  Installing       : ghc-srpm-macros-1.4.2-7.el8.noarch                                                          94/103
+  Installing       : efi-srpm-macros-3-3.el8.noarch                                                              95/103
+  Installing       : dwz-0.12-10.el8.x86_64                                                                      96/103
+  Installing       : redhat-rpm-config-125-1.el8.noarch                                                          97/103
+  Installing       : rpm-build-4.14.3-19.el8.x86_64                                                              98/103
+  Installing       : cups-client-1:2.2.6-40.el8.x86_64                                                           99/103
+  Running scriptlet: cups-client-1:2.2.6-40.el8.x86_64                                                           99/103
+  Installing       : redhat-lsb-core-4.1-47.el8.x86_64                                                          100/103
+  Installing       : rpmdevtools-8.10-8.el8.noarch                                                              101/103
+  Installing       : createrepo_c-0.17.2-3.el8.x86_64                                                           102/103
+  Installing       : wget-1.19.5-10.el8.x86_64                                                                  103/103
+  Running scriptlet: wget-1.19.5-10.el8.x86_64                                                                  103/103
+  Running scriptlet: nss-3.67.0-7.el8_5.x86_64                                                                  103/103
+  Running scriptlet: guile-5:2.0.14-7.el8.x86_64                                                                103/103
+  Running scriptlet: wget-1.19.5-10.el8.x86_64                                                                  103/103
+  Verifying        : annobin-9.72-1.el8_5.2.x86_64                                                                1/103
+  Verifying        : cpp-8.5.0-4.el8_5.x86_64                                                                     2/103
+  Verifying        : createrepo_c-0.17.2-3.el8.x86_64                                                             3/103
+  Verifying        : createrepo_c-libs-0.17.2-3.el8.x86_64                                                        4/103
+  Verifying        : cups-client-1:2.2.6-40.el8.x86_64                                                            5/103
+  Verifying        : drpm-0.4.1-3.el8.x86_64                                                                      6/103
+  Verifying        : dwz-0.12-10.el8.x86_64                                                                       7/103
+  Verifying        : efi-srpm-macros-3-3.el8.noarch                                                               8/103
+  Verifying        : gc-7.6.4-3.el8.x86_64                                                                        9/103
+  Verifying        : gcc-8.5.0-4.el8_5.x86_64                                                                    10/103
+  Verifying        : gdb-headless-8.2-16.el8.x86_64                                                              11/103
+  ....
+  Verifying        : python-srpm-macros-3-41.el8.noarch                                                          37/103
+  Verifying        : python3-rpm-macros-3-41.el8.noarch                                                          38/103
+  Verifying        : qt5-srpm-macros-5.15.2-1.el8.noarch                                                         39/103
+  Verifying        : redhat-lsb-core-4.1-47.el8.x86_64                                                           40/103
+  Verifying        : redhat-lsb-submod-security-4.1-47.el8.x86_64                                                41/103
+  Verifying        : redhat-rpm-config-125-1.el8.noarch                                                          42/103
+  Verifying        : rpm-build-4.14.3-19.el8.x86_64                                                              43/103
+  Verifying        : rpmdevtools-8.10-8.el8.noarch                                                               44/103
+  Verifying        : rust-srpm-macros-5-2.el8.noarch                                                             45/103
+  Verifying        : wget-1.19.5-10.el8.x86_64                                                                   46/103
+  Verifying        : zstd-1.4.4-1.el8.x86_64                                                                     47/103
+  Verifying        : at-3.1.20-11.el8.x86_64                                                                     48/103
+  Verifying        : bc-1.07.1-5.el8.x86_64                                                                      49/103
+  Verifying        : binutils-2.30-108.el8_5.1.x86_64                                                            50/103
+  Verifying        : ed-1.14.2-4.el8.x86_64                                                                      51/103
+  Verifying        : elfutils-0.185-1.el8.x86_64                                                                 52/103
+  Verifying        : emacs-filesystem-1:26.1-7.el8.noarch                                                        53/103
+  Verifying        : glibc-devel-2.28-164.el8.x86_64                                                             54/103
+  Verifying        : glibc-headers-2.28-164.el8.x86_64                                                           55/103
+  Verifying        : kernel-headers-4.18.0-348.7.1.el8_5.x86_64                                                  56/103
+  Verifying        : libbabeltrace-1.5.4-3.el8.x86_64                                                            57/103
+  Verifying        : libxcrypt-devel-4.1.1-6.el8.x86_64                                                          58/103
+  Verifying        : m4-1.4.18-7.el8.x86_64                                                                      59/103
+  Verifying        : mailx-12.5-29.el8.x86_64                                                                    60/103
+  Verifying        : make-1:4.2.1-10.el8.x86_64                                                                  61/103
+  Verifying        : ncurses-compat-libs-6.1-9.20180224.el8.x86_64                                               62/103
+  Verifying        : patch-2.7.6-11.el8.x86_64                                                                   63/103
+  Verifying        : perl-Carp-1.42-396.el8.noarch                                                               64/103
+  Verifying        : perl-Data-Dumper-2.167-399.el8.x86_64                                                       65/103
+  Verifying        : perl-Encode-4:2.97-3.el8.x86_64                                                             66/103
+  ....
+  Verifying        : time-1.9-3.el8.x86_64                                                                      100/103
+  Verifying        : unzip-6.0-45.el8_4.x86_64                                                                  101/103
+  Verifying        : util-linux-user-2.32.1-28.el8.x86_64                                                       102/103
+  Verifying        : zip-3.0-23.el8.x86_64                                                                      103/103
+
+Installed:
+  annobin-9.72-1.el8_5.2.x86_64
+  at-3.1.20-11.el8.x86_64
+  bc-1.07.1-5.el8.x86_64
+  binutils-2.30-108.el8_5.1.x86_64
+  cpp-8.5.0-4.el8_5.x86_64
+  createrepo_c-0.17.2-3.el8.x86_64
+  createrepo_c-libs-0.17.2-3.el8.x86_64
+  cups-client-1:2.2.6-40.el8.x86_64
+  drpm-0.4.1-3.el8.x86_64
+  dwz-0.12-10.el8.x86_64
+  ed-1.14.2-4.el8.x86_64
+  efi-srpm-macros-3-3.el8.noarch
+  elfutils-0.185-1.el8.x86_64
+  emacs-filesystem-1:26.1-7.el8.noarch
+  gc-7.6.4-3.el8.x86_64
+  gcc-8.5.0-4.el8_5.x86_64
+  gdb-headless-8.2-16.el8.x86_64
+  ghc-srpm-macros-1.4.2-7.el8.noarch
+  glibc-devel-2.28-164.el8.x86_64
+  glibc-headers-2.28-164.el8.x86_64
+  go-srpm-macros-2-17.el8.noarch
+  guile-5:2.0.14-7.el8.x86_64
+  isl-0.16.1-6.el8.x86_64
+  kernel-headers-4.18.0-348.7.1.el8_5.x86_64
+  libatomic_ops-7.6.2-3.el8.x86_64
+  libbabeltrace-1.5.4-3.el8.x86_64
+  libipt-1.6.1-8.el8.x86_64
+  libmpc-1.1.0-9.1.el8.x86_64
+  libxcrypt-devel-4.1.1-6.el8.x86_64
+  m4-1.4.18-7.el8.x86_64
+  mailx-12.5-29.el8.x86_64
+  make-1:4.2.1-10.el8.x86_64
+  ncurses-compat-libs-6.1-9.20180224.el8.x86_64
+  nspr-4.32.0-1.el8_4.x86_64
+  nss-3.67.0-7.el8_5.x86_64
+  nss-softokn-3.67.0-7.el8_5.x86_64
+  nss-softokn-freebl-3.67.0-7.el8_5.x86_64
+  nss-sysinit-3.67.0-7.el8_5.x86_64
+  nss-util-3.67.0-7.el8_5.x86_64
+  ocaml-srpm-macros-5-4.el8.noarch
+  openblas-srpm-macros-2-2.el8.noarch
+  patch-2.7.6-11.el8.x86_64
+  perl-Carp-1.42-396.el8.noarch
+  perl-Data-Dumper-2.167-399.el8.x86_64
+  perl-Digest-1.17-395.el8.noarch
+  perl-Digest-MD5-2.55-396.el8.x86_64
+  perl-Encode-4:2.97-3.el8.x86_64
+  perl-Errno-1.28-420.el8.x86_64
+  perl-Exporter-5.72-396.el8.noarch
+  perl-File-Path-2.15-2.el8.noarch
+  perl-File-Temp-0.230.600-1.el8.noarch
+  perl-Getopt-Long-1:2.50-4.el8.noarch
+  perl-HTTP-Tiny-0.074-1.el8.noarch
+  perl-IO-1.38-420.el8.x86_64
+  perl-IO-Socket-IP-0.39-5.el8.noarch
+  perl-IO-Socket-SSL-2.066-4.module_el8.3.0+410+ff426aa3.noarch
+  perl-MIME-Base64-3.15-396.el8.x86_64
+  perl-Mozilla-CA-20160104-7.module_el8.3.0+416+dee7bcef.noarch
+  perl-Net-SSLeay-1.88-1.module_el8.3.0+410+ff426aa3.x86_64
+  perl-PathTools-3.74-1.el8.x86_64
+  perl-Pod-Escapes-1:1.07-395.el8.noarch
+  perl-Pod-Perldoc-3.28-396.el8.noarch
+  perl-Pod-Simple-1:3.35-395.el8.noarch
+  perl-Pod-Usage-4:1.69-395.el8.noarch
+  perl-Scalar-List-Utils-3:1.49-2.el8.x86_64
+  perl-Socket-4:2.027-3.el8.x86_64
+  perl-Storable-1:3.11-3.el8.x86_64
+  perl-Term-ANSIColor-4.06-396.el8.noarch
+  perl-Term-Cap-1.17-395.el8.noarch
+  perl-Text-ParseWords-3.30-395.el8.noarch
+  perl-Text-Tabs+Wrap-2013.0523-395.el8.noarch
+  perl-Time-Local-1:1.280-1.el8.noarch
+  perl-URI-1.73-3.el8.noarch
+  perl-Unicode-Normalize-1.25-396.el8.x86_64
+  perl-constant-1.33-396.el8.noarch
+  perl-interpreter-4:5.26.3-420.el8.x86_64
+  perl-libnet-3.11-3.el8.noarch
+  perl-libs-4:5.26.3-420.el8.x86_64
+  perl-macros-4:5.26.3-420.el8.x86_64
+  perl-parent-1:0.237-1.el8.noarch
+  perl-podlators-4.11-1.el8.noarch
+  perl-srpm-macros-1-25.el8.noarch
+  perl-threads-1:2.21-2.el8.x86_64
+  perl-threads-shared-1.58-2.el8.x86_64
+  postfix-2:3.5.8-2.el8.x86_64
+  psmisc-23.1-5.el8.x86_64
+  python-rpm-macros-3-41.el8.noarch
+  python-srpm-macros-3-41.el8.noarch
+  python3-rpm-macros-3-41.el8.noarch
+  qt5-srpm-macros-5.15.2-1.el8.noarch
+  redhat-lsb-core-4.1-47.el8.x86_64
+  redhat-lsb-submod-security-4.1-47.el8.x86_64
+  redhat-rpm-config-125-1.el8.noarch
+  rpm-build-4.14.3-19.el8.x86_64
+  rpmdevtools-8.10-8.el8.noarch
+  rust-srpm-macros-5-2.el8.noarch
+  spax-1.5.3-13.el8.x86_64
+  time-1.9-3.el8.x86_64
+  unzip-6.0-45.el8_4.x86_64
+  util-linux-user-2.32.1-28.el8.x86_64
+  wget-1.19.5-10.el8.x86_64
+  zip-3.0-23.el8.x86_64
+  zstd-1.4.4-1.el8.x86_64
+
+Complete!
+[root@localhost yum.repos.d]#
+
+# Загрузим SRPM пакет NGINX длā далþнейшей работý над ним:
+
+[root@localhost yum.repos.d]# wget https://nginx.org/packages/centos/8/SRPMS/nginx-1.20.2-1.el8.ngx.src.rpm
+--2024-01-29 14:32:03--  https://nginx.org/packages/centos/8/SRPMS/nginx-1.20.2-1.el8.ngx.src.rpm
+Resolving nginx.org (nginx.org)... 3.125.197.172, 52.58.199.22, 2a05:d014:edb:5702::6, ...
+Connecting to nginx.org (nginx.org)|3.125.197.172|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1086865 (1.0M) [application/x-redhat-package-manager]
+Saving to: ‘nginx-1.20.2-1.el8.ngx.src.rpm’
+
+nginx-1.20.2-1.el8.ngx.src.rp 100%[=================================================>]   1.04M   682KB/s    in 1.6s
+
+2024-01-29 14:32:06 (682 KB/s) - ‘nginx-1.20.2-1.el8.ngx.src.rpm’ saved [1086865/1086865]
+
+
+# в домашней директории создаетсā дерево каталогов для сборки:
+
+[root@localhost yum.repos.d]# rpm -i nginx-1.*
+warning: nginx-1.20.2-1.el8.ngx.src.rpm: Header V4 RSA/SHA1 Signature, key ID 7bd9bf62: NOKEY
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+warning: user builder does not exist - using root
+warning: group builder does not exist - using root
+
+# загружаем исходники для openSSL. Я выбрал версию 3.2.0 которая как увидим дальше не работает имеет ошибки
+
+[root@localhost yum.repos.d]# wget https://www.openssl.org/source/openssl-3.2.0.tar.gz
+--2024-01-29 21:31:41--  https://www.openssl.org/source/openssl-3.2.0.tar.gz
+Resolving www.openssl.org (www.openssl.org)... 34.36.58.177, 2600:1901:0:1812::
+Connecting to www.openssl.org (www.openssl.org)|34.36.58.177|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 17698352 (17M) [application/x-tar]
+Saving to: ‘openssl-3.2.0.tar.gz’
+
+openssl-3.2.0.tar.gz          100%[=================================================>]  16.88M  5.04MB/s    in 4.0s
+
+2024-01-29 21:31:46 (4.26 MB/s) - ‘openssl-3.2.0.tar.gz’ saved [17698352/17698352]
+
+# Распаковывакм архив
+
+[root@localhost yum.repos.d]#tar -xvf openssl-3.2.0.tar.gz
+....
+# поставим все зависимости чтобý в процессе сборки не бýло ошибок
+
+[root@localhost ~]# yum-builddep rpmbuild/SPECS/nginx.spec
+Last metadata expiration check: 4:28:27 ago on Mon 29 Jan 2024 05:42:31 PM UTC.
+Package openssl-devel-1:1.1.1k-5.el8_5.x86_64 is already installed.
+Package pcre-devel-8.42-6.el8.x86_64 is already installed.
+Package systemd-239-51.el8_5.2.x86_64 is already installed.
+Package zlib-devel-1.2.11-17.el8.x86_64 is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+[root@localhost ~]#
+
+# редактируем nginx.spec файл 
+# в раздел build добавим строку     --with-openssl=/root/openssl-3.2.0 \
+....
+%build
+./configure %{BASE_CONFIGURE_ARGS} \
+    --with-cc-opt="%{WITH_CC_OPT}" \
+    --with-ld-opt="%{WITH_LD_OPT}" \
+    --with-openssl=/root/openssl-3.2.0 \
+    --with-debug
+make %{?_smp_mflags}
+%{__mv} %{bdir}/objs/nginx \
+    %{bdir}/objs/nginx-debug
+./configure %{BASE_CONFIGURE_ARGS} \
+    --with-cc-opt="%{WITH_CC_OPT}" \
+    --with-ld-opt="%{WITH_LD_OPT}"
+make %{?_smp_mflags}
+....
+
+#### Ошибка ошибка ошибка !!!!
+
+
+[root@localhost ~]# rpmbuild -bb rpmbuild/SPECS/nginx.spec
+Executing(%prep): /bin/sh -e /var/tmp/rpm-tmp.z2gYbl
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd /root/rpmbuild/BUILD
++ rm -rf nginx-1.20.2
++ /usr/bin/tar -xof -
++ /usr/bin/gzip -dc /root/rpmbuild/SOURCES/nginx-1.20.2.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd nginx-1.20.2
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+Executing(%build): /bin/sh -e /var/tmp/rpm-tmp.1bMvKj
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd nginx-1.20.2
+++ echo '--prefix=/etc/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --pid-path=/var/run/nginx.pid --lock-path=/var/run/nginx.lock --http-client-body-temp-path=/var/cache/nginx/client_temp --http-proxy-temp-path=/var/cache/nginx/proxy_temp --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp --http-scgi-temp-path=/var/cache/nginx/scgi_temp --user=nginx --group=nginx --with-compat --with-file-aio --with-threads --with-http_addition_module --with-http_auth_request_module --with-http_dav_module --with-http_flv_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_realip_module --with-http_secure_link_module --with-http_slice_module --with-http_ssl_module --with-http_stub_status_module --with-http_sub_module --with-http_v2_module --with-mail --with-mail_ssl_module --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module'
++++ pcre-config --cflags
+++ echo -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection
++ ./configure --prefix=/etc/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --pid-path=/var/run/nginx.pid --lock-path=/var/run/nginx.lock --http-client-body-temp-path=/var/cache/nginx/client_temp --http-proxy-temp-path=/var/cache/nginx/proxy_temp --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp --http-scgi-temp-path=/var/cache/nginx/scgi_temp --user=nginx --group=nginx --with-compat --with-file-aio --with-threads --with-http_addition_module --with-http_auth_request_module --with-http_dav_module --with-http_flv_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_realip_module --with-http_secure_link_module --with-http_slice_module --with-http_ssl_module --with-http_stub_status_module --with-http_sub_module --with-http_v2_module --with-mail --with-mail_ssl_module --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module '--with-cc-opt=-O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -fPIC' '--with-ld-opt=-Wl,-z,relro -Wl,-z,now -pie' --with-openssl=/root/openssl-3.2.0 --with-debug
+checking for OS
+ + Linux 4.18.0-240.1.1.el8_3.x86_64 x86_64
+checking for C compiler ... found
+ + using GNU C compiler
+ + gcc version: 8.5.0 20210514 (Red Hat 8.5.0-4) (GCC)
+checking for gcc -pipe switch ... found
+checking for --with-ld-opt="-Wl,-z,relro -Wl,-z,now -pie" ... found
+checking for -Wl,-E switch ... found
+checking for gcc builtin atomic operations ... found
+checking for C99 variadic macros ... found
+checking for gcc variadic macros ... found
+checking for gcc builtin 64 bit byteswap ... found
+checking for unistd.h ... found
+checking for inttypes.h ... found
+checking for limits.h ... found
+checking for sys/filio.h ... not found
+checking for sys/param.h ... found
+checking for sys/mount.h ... found
+checking for sys/statvfs.h ... found
+checking for crypt.h ... found
+checking for Linux specific features
+checking for epoll ... found
+checking for EPOLLRDHUP ... found
+checking for EPOLLEXCLUSIVE ... found
+checking for eventfd() ... found
+checking for O_PATH ... found
+checking for sendfile() ... found
+checking for sendfile64() ... found
+checking for sys/prctl.h ... found
+checking for prctl(PR_SET_DUMPABLE) ... found
+checking for prctl(PR_SET_KEEPCAPS) ... found
+checking for capabilities ... found
+checking for crypt_r() ... found
+checking for sys/vfs.h ... found
+checking for poll() ... found
+checking for /dev/poll ... not found
+checking for kqueue ... not found
+checking for crypt() ... not found
+checking for crypt() in libcrypt ... found
+checking for F_READAHEAD ... not found
+checking for posix_fadvise() ... found
+checking for O_DIRECT ... found
+checking for F_NOCACHE ... not found
+checking for directio() ... not found
+checking for statfs() ... found
+checking for statvfs() ... found
+checking for dlopen() ... not found
+checking for dlopen() in libdl ... found
+checking for sched_yield() ... found
+checking for sched_setaffinity() ... found
+checking for SO_SETFIB ... not found
+checking for SO_REUSEPORT ... found
+checking for SO_ACCEPTFILTER ... not found
+checking for SO_BINDANY ... not found
+checking for IP_TRANSPARENT ... found
+checking for IP_BINDANY ... not found
+checking for IP_BIND_ADDRESS_NO_PORT ... found
+checking for IP_RECVDSTADDR ... not found
+checking for IP_SENDSRCADDR ... not found
+checking for IP_PKTINFO ... found
+checking for IPV6_RECVPKTINFO ... found
+checking for TCP_DEFER_ACCEPT ... found
+checking for TCP_KEEPIDLE ... found
+checking for TCP_FASTOPEN ... found
+checking for TCP_INFO ... found
+checking for accept4() ... found
+checking for kqueue AIO support ... not found
+checking for Linux AIO support ... found
+checking for int size ... 4 bytes
+checking for long size ... 8 bytes
+checking for long long size ... 8 bytes
+checking for void * size ... 8 bytes
+checking for uint32_t ... found
+checking for uint64_t ... found
+checking for sig_atomic_t ... found
+checking for sig_atomic_t size ... 4 bytes
+checking for socklen_t ... found
+checking for in_addr_t ... found
+checking for in_port_t ... found
+checking for rlim_t ... found
+checking for uintptr_t ... uintptr_t found
+checking for system byte ordering ... little endian
+checking for size_t size ... 8 bytes
+checking for off_t size ... 8 bytes
+checking for time_t size ... 8 bytes
+checking for AF_INET6 ... found
+checking for setproctitle() ... not found
+checking for pread() ... found
+checking for pwrite() ... found
+checking for pwritev() ... found
+checking for strerrordesc_np() ... not found
+checking for sys_nerr ... found
+checking for localtime_r() ... found
+checking for clock_gettime(CLOCK_MONOTONIC) ... found
+checking for posix_memalign() ... found
+checking for memalign() ... found
+checking for mmap(MAP_ANON|MAP_SHARED) ... found
+checking for mmap("/dev/zero", MAP_SHARED) ... found
+checking for System V shared memory ... found
+checking for POSIX semaphores ... not found
+checking for POSIX semaphores in libpthread ... found
+checking for struct msghdr.msg_control ... found
+checking for ioctl(FIONBIO) ... found
+checking for ioctl(FIONREAD) ... found
+checking for struct tm.tm_gmtoff ... found
+checking for struct dirent.d_namlen ... not found
+checking for struct dirent.d_type ... found
+checking for sysconf(_SC_NPROCESSORS_ONLN) ... found
+checking for sysconf(_SC_LEVEL1_DCACHE_LINESIZE) ... found
+checking for openat(), fstatat() ... found
+checking for getaddrinfo() ... found
+checking for PCRE library ... found
+checking for PCRE JIT support ... found
+checking for zlib library ... found
+creating objs/Makefile
+
+Configuration summary
+  + using threads
+  + using system PCRE library
+  + using OpenSSL library: /root/openssl-3.2.0
+  + using system zlib library
+
+  nginx path prefix: "/etc/nginx"
+  nginx binary file: "/usr/sbin/nginx"
+  nginx modules path: "/usr/lib64/nginx/modules"
+  nginx configuration prefix: "/etc/nginx"
+  nginx configuration file: "/etc/nginx/nginx.conf"
+  nginx pid file: "/var/run/nginx.pid"
+  nginx error log file: "/var/log/nginx/error.log"
+  nginx http access log file: "/var/log/nginx/access.log"
+  nginx http client request body temporary files: "/var/cache/nginx/client_temp"
+  nginx http proxy temporary files: "/var/cache/nginx/proxy_temp"
+  nginx http fastcgi temporary files: "/var/cache/nginx/fastcgi_temp"
+  nginx http uwsgi temporary files: "/var/cache/nginx/uwsgi_temp"
+  nginx http scgi temporary files: "/var/cache/nginx/scgi_temp"
+
++ make
+make -f objs/Makefile
+make[1]: Entering directory '/root/rpmbuild/BUILD/nginx-1.20.2'
+cd /root/openssl-3.2.0 \
+&& if [ -f Makefile ]; then make clean; fi \
+&& ./config --prefix=/root/openssl-3.2.0/.openssl no-shared no-threads  \
+&& make \
+&& make install_sw LIBDIR=lib
+Can't locate IPC/Cmd.pm in @INC (you may need to install the IPC::Cmd module) (@INC contains: /root/openssl-3.2.0/util/perl /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5 /root/openssl-3.2.0/external/perl/Text-Template-1.56/lib) at /root/openssl-3.2.0/util/perl/OpenSSL/config.pm line 19.
+BEGIN failed--compilation aborted at /root/openssl-3.2.0/util/perl/OpenSSL/config.pm line 19.
+Compilation failed in require at /root/openssl-3.2.0/Configure line 23.
+BEGIN failed--compilation aborted at /root/openssl-3.2.0/Configure line 23.
+make[1]: *** [objs/Makefile:1833: /root/openssl-3.2.0/.openssl/include/openssl/ssl.h] Error 2
+make[1]: Leaving directory '/root/rpmbuild/BUILD/nginx-1.20.2'
+make: *** [Makefile:10: build] Error 2
+error: Bad exit status from /var/tmp/rpm-tmp.1bMvKj (%build)
+
+
+RPM build errors:
+    Bad exit status from /var/tmp/rpm-tmp.1bMvKj (%build)
+	
+# Конец ошибки ошибки
+## ДАЛЬШЕ РАБОТАЕМ С ВЕРСИЕЙ OPENSSL 1.1.1W
+
+[root@localhost yum.repos.d]# wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz
+--2024-01-29 21:31:41--  https://www.openssl.org/source/openssl-1.1.1w.tar.gz
+Resolving www.openssl.org (www.openssl.org)... 34.36.58.177, 2600:1901:0:1812::
+Connecting to www.openssl.org (www.openssl.org)|34.36.58.177|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 17698352 (17M) [application/x-tar]
+Saving to: ‘openssl-3.2.0.tar.gz’
+
+openssl-3.2.0.tar.gz          100%[=================================================>]  16.88M  5.04MB/s    in 4.0s
+
+2024-01-29 21:31:46 (4.26 MB/s) - ‘openssl-1.1.1w.tar.gz’ saved [17698352/17698352]
+
+[root@localhost yum.repos.d]#tar -xvf openssl-1.21.01w.tar.gz
+....
+
+# в файле nginx.spec делаем замену
+
+....
+%build
+./configure %{BASE_CONFIGURE_ARGS} \
+    --with-cc-opt="%{WITH_CC_OPT}" \
+    --with-ld-opt="%{WITH_LD_OPT}" \
+    --with-openssl=/root/openssl-1.1.1w \            ## <<<=====
+    --with-debug
+make %{?_smp_mflags}
+%{__mv} %{bdir}/objs/nginx \
+    %{bdir}/objs/nginx-debug
+./configure %{BASE_CONFIGURE_ARGS} \
+    --with-cc-opt="%{WITH_CC_OPT}" \
+    --with-ld-opt="%{WITH_LD_OPT}"
+make %{?_smp_mflags}
+....
+# Запускаем сборку
+
+[root@localhost ~]# rpmbuild -bb rpmbuild/SPECS/nginx.spec
+....
+
+....
+Executing(%clean): /bin/sh -e /var/tmp/rpm-tmp.6cyRwo
++ umask 022
++ cd /root/rpmbuild/BUILD
++ cd nginx-1.20.2
++ /usr/bin/rm -rf /root/rpmbuild/BUILDROOT/nginx-1.20.2-1.el8.ngx.x86_64
++ exit 0
+
+# Проверяем сборку 
+
+[root@localhost ~]# ll rpmbuild/RPMS/x86_64/
+total 4676
+-rw-r--r--. 1 root root 2250420 Jan 29 23:04 nginx-1.20.2-1.el8.ngx.x86_64.rpm
+-rw-r--r--. 1 root root 2532908 Jan 29 23:04 nginx-debuginfo-1.20.2-1.el8.ngx.x86_64.rpm
+[root@localhost ~]#
+
+#Теперþ можно установитþ наш пакет и убедитþсā что nginx работает
+
+[root@localhost ~]# yum localinstall -y \
+> rpmbuild/RPMS/x86_64/nginx-1.20.2-1.el8.ngx.x86_64.rpm
+Last metadata expiration check: 5:33:33 ago on Mon 29 Jan 2024 05:42:31 PM UTC.
+Dependencies resolved.
+========================================================================================= Package        Architecture    Version                      Repository             Size
+=========================================================================================Installing:
+ nginx          x86_64          1:1.20.2-1.el8.ngx           @commandline          2.1 M
+
+Transaction Summary
+=========================================================================================Install  1 Package
+
+Total size: 2.1 M
+Installed size: 6.1 M
+Downloading Packages:
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                 1/1
+  Running scriptlet: nginx-1:1.20.2-1.el8.ngx.x86_64                                 1/1
+  Installing       : nginx-1:1.20.2-1.el8.ngx.x86_64                                 1/1
+  Running scriptlet: nginx-1:1.20.2-1.el8.ngx.x86_64                                 1/1
+----------------------------------------------------------------------
+
+Thanks for using nginx!
+
+Please find the official documentation for nginx here:
+* https://nginx.org/en/docs/
+
+Please subscribe to nginx-announce mailing list to get
+the most important news about nginx:
+* https://nginx.org/en/support.html
+
+Commercial subscriptions for nginx are available on:
+* https://nginx.com/products/
+
+----------------------------------------------------------------------
+
+  Running scriptlet: nginx-1:1.20.2-1.el8.ngx.x86_64                                                                                                                                                                                     1/1
+  Verifying        : nginx-1:1.20.2-1.el8.ngx.x86_64                                                                                                                                                                                     1/1
+
+Installed:
+  nginx-1:1.20.2-1.el8.ngx.x86_64
+
+Complete!
+[root@localhost ~]#
+
+# Запускаем nginx
+
+[root@localhost ~]# systemctl start nginx
+[root@localhost ~]# systemctl status nginx
+● nginx.service - nginx - high performance web server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset: disabled)
+   Active: active (running) since Mon 2024-01-29 23:18:26 UTC; 5s ago
+     Docs: http://nginx.org/en/docs/
+  Process: 58343 ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf (code=exited, status=0/SUCCESS)
+ Main PID: 58344 (nginx)
+    Tasks: 2 (limit: 2746)
+   Memory: 3.6M
+   CGroup: /system.slice/nginx.service
+           ├─58344 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf
+           └─58345 nginx: worker process
+
+Jan 29 23:18:26 localhost.localdomain systemd[1]: Starting nginx - high performance web server...
+Jan 29 23:18:26 localhost.localdomain systemd[1]: nginx.service: Can't open PID file /var/run/nginx.pid (yet?) after start: No such file or directory
+Jan 29 23:18:26 localhost.localdomain systemd[1]: Started nginx - high performance web server.
+[root@localhost ~]#
+
+# Теперь приступим к созданиĀ своего репозиториā. Директориā длā статики у NGINX по
+# умолчанию /usr/share/nginx/html. Создадим там каталог repo:
+
+[root@localhost ~]# [root@localhost ~]# ls -l /usr/share/nginx/html/
+total 8
+-rw-r--r--. 1 root root 494 Jan 29 23:03 50x.html
+-rw-r--r--. 1 root root 612 Jan 29 23:03 index.html
+[root@localhost ~]# mkdir /usr/share/nginx/html/repo
+[root@localhost ~]# ls -l /usr/share/nginx/html/
+total 8
+-rw-r--r--. 1 root root 494 Jan 29 23:03 50x.html
+-rw-r--r--. 1 root root 612 Jan 29 23:03 index.html
+drwxr-xr-x. 2 root root   6 Jan 29 23:21 repo
+[root@localhost ~]#
+
+# Копируем туда наш собранный RPM и, например, RPM для установки репозитория Percona-Server:
+
+[root@localhost ~]# cp rpmbuild/RPMS/x86_64/nginx-1.20.2-1.el8.ngx.x86_64.rpm /usr/share/nginx/html/repo/
+[root@localhost ~]#
+
+[root@localhost ~]# wget https://downloads.percona.com/downloads/percona-distribution-mysql-ps/percona-distribution-mysql-ps-8.0.28/binary/redhat/8/x86_64/percona-orchestrator-3.2.6-2.el8.x86_64.rpm -O /usr/share/nginx/html/repo/percona-orchestrator-3.2.6-2.el8.x86_64.rpm
+--2024-01-29 23:31:19--  https://downloads.percona.com/downloads/percona-distribution-mysql-ps/percona-distribution-mysql-ps-8.0.28/binary/redhat/8/x86_64/percona-orchestrator-3.2.6-2.el8.x86_64.rpm
+Resolving downloads.percona.com (downloads.percona.com)... 49.12.125.205, 2a01:4f8:242:5792::2
+Connecting to downloads.percona.com (downloads.percona.com)|49.12.125.205|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 5222976 (5.0M) [application/x-redhat-package-manager]
+Saving to: ‘/usr/share/nginx/html/repo/percona-orchestrator-3.2.6-2.el8.x86_64.rpm’
+
+/usr/share/nginx/html/repo/percona-orchestrator-3. 100%[================================================================================================================>]   4.98M  2.31MB/s    in 2.2s
+
+2024-01-29 23:31:22 (2.31 MB/s) - ‘/usr/share/nginx/html/repo/percona-orchestrator-3.2.6-2.el8.x86_64.rpm’ saved [5222976/5222976]
+
+[root@localhost ~]#
+
+# Инициализируем репозиторий командой:
+
+[root@localhost ~]# createrepo /usr/share/nginx/html/repo/
+Directory walk started
+Directory walk done - 2 packages
+Temporary output repo path: /usr/share/nginx/html/repo/.repodata/
+Preparing sqlite DBs
+Pool started (with 5 workers)
+Pool finished
+[root@localhost ~]#
+
+#Для прозрачности настроим в NGINX доступ к листингу каталога:
+#в файле /etc/nginx/conf.d/default.conf добавим директиву autoindex on.
+
+[root@localhost ~]# vi /etc/nginx/conf.d/default.conf
+
+# Проверяем синтаксис
+
+[root@localhost ~]# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[root@localhost ~]#
+
+# перегружаем nginx
+
+[root@localhost ~]# nginx -s reload
+[root@localhost ~]#
+
+# смотрим с помощью curl 
+
+[root@localhost ~]# [root@localhost ~]# curl -a http://localhost/repo/
+<html>
+<head><title>Index of /repo/</title></head>
+<body>
+<h1>Index of /repo/</h1><hr><pre><a href="../">../</a>
+<a href="repodata/">repodata/</a>                                          29-Jan-2024 23:33                   -
+<a href="nginx-1.20.2-1.el8.ngx.x86_64.rpm">nginx-1.20.2-1.el8.ngx.x86_64.rpm</a>                  29-Jan-2024 23:25             2250420
+<a href="percona-orchestrator-3.2.6-2.el8.x86_64.rpm">percona-orchestrator-3.2.6-2.el8.x86_64.rpm</a>        16-Feb-2022 15:57             5222976
+</pre><hr></body>
+</html>
+[root@localhost ~]#
+
+#  Все готово, чтобы добавить в репозиторий . Добавим его в /etc/yum.repos.d:
+
+[root@localhost ~]# cat >> /etc/yum.repos.d/otus.repo << EOF
+> [otus]
+> name=otus-linux
+> baseurl=http://localhost/repo
+> gpgcheck=0
+> enabled=1
+> EOF
+[root@localhost ~]#
+
+#Убедимсā что репозиторий подключилсā и посмотрим что в нем есть:
+
+[root@localhost ~]# yum repolist enabled | grep otus
+otus                            otus-linux
+[root@localhost ~]#
+
+[root@localhost ~]# yum list | grep otus
+otus-linux                                      137 kB/s | 2.8 kB     00:00
+percona-orchestrator.x86_64                            2:3.2.6-2.el8                                          otus
+[root@localhost ~]#
+
+#установим репозиторий percona-release:
+
+[root@localhost ~]# yum install percona-orchestrator.x86_64 -y
+Last metadata expiration check: 0:03:10 ago on Mon 29 Jan 2024 11:48:33 PM UTC.
+Dependencies resolved.
+============================================================================================================
+ Package                          Architecture       Version                    Repository             Size
+============================================================================================================
+Installing:
+ percona-orchestrator             x86_64             2:3.2.6-2.el8              otus                  5.0 M
+Installing dependencies:
+ jq                               x86_64             1.5-12.el8                 appstream             161 k
+ oniguruma                        x86_64             6.8.2-2.el8                appstream             187 k
+
+Transaction Summary
+============================================================================================================
+Install  3 Packages
+
+Total download size: 5.3 M
+Installed size: 17 M
+Downloading Packages:
+(1/3): percona-orchestrator-3.2.6-2.el8.x86_64.rpm                           47 MB/s | 5.0 MB     00:00
+(2/3): oniguruma-6.8.2-2.el8.x86_64.rpm                                      95 kB/s | 187 kB     00:01
+(3/3): jq-1.5-12.el8.x86_64.rpm                                              80 kB/s | 161 kB     00:02
+------------------------------------------------------------------------------------------------------------
+Total                                                                       2.6 MB/s | 5.3 MB     00:02
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                    1/1
+  Installing       : oniguruma-6.8.2-2.el8.x86_64                                                       1/3
+  Running scriptlet: oniguruma-6.8.2-2.el8.x86_64                                                       1/3
+  Installing       : jq-1.5-12.el8.x86_64                                                               2/3
+  Installing       : percona-orchestrator-2:3.2.6-2.el8.x86_64                                          3/3
+  Running scriptlet: percona-orchestrator-2:3.2.6-2.el8.x86_64                                          3/3
+  Verifying        : jq-1.5-12.el8.x86_64                                                               1/3
+  Verifying        : oniguruma-6.8.2-2.el8.x86_64                                                       2/3
+  Verifying        : percona-orchestrator-2:3.2.6-2.el8.x86_64                                          3/3
+
+Installed:
+  jq-1.5-12.el8.x86_64      oniguruma-6.8.2-2.el8.x86_64      percona-orchestrator-2:3.2.6-2.el8.x86_64
+
+Complete!
+
+
+[root@localhost ~]# createrepo /usr/share/nginx/html/repo/
+Directory walk started
+Directory walk done - 2 packages
+Temporary output repo path: /usr/share/nginx/html/repo/.repodata/
+Preparing sqlite DBs
+Pool started (with 5 workers)
+Pool finished
+[root@localhost ~]#
+
+[root@localhost ~]# yum repolist
+repo id                                       repo name
+appstream                                     CentOS Linux 8 - AppStream
+baseos                                        CentOS Linux 8 - BaseOS
+extras                                        CentOS Linux 8 - Extras
+otus                                          otus-linux
+[root@localhost ~]#
